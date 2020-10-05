@@ -2,12 +2,26 @@
 <project version="4">
   <component name="CompilerConfiguration">
     <annotationProcessing>
+      <profile default="true" name="Default" enabled="true" />
       <profile name="Maven default annotation processors profile" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="notification" />
+        <module name="database-service" />
+        <module name="cleaner-service" />
+        <module name="notification-service" />
+        <module name="ui-service" />
+        <module name="parser-service" />
       </profile>
     </annotationProcessing>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="cleaner-service" options="-parameters" />
+      <module name="database-service" options="-parameters" />
+      <module name="notification-service" options="-parameters" />
+      <module name="parser-service" options="-parameters" />
+      <module name="ui-service" options="-parameters" />
+    </option>
   </component>
 </project>

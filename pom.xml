@@ -4,9 +4,30 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
+    <modules>
+        <module>cleaner-service</module>
+        <module>ui-service</module>
+        <module>parser-service</module>
+        <module>notification-service</module>
+        <module>database-service</module>
+    </modules>
+
+    <properties>
+        <java.version>1.8</java.version>
+    </properties>
+
+    <packaging>pom</packaging>
+
     <groupId>ru.geekbrains</groupId>
     <artifactId>notification</artifactId>
     <version>1.0-SNAPSHOT</version>
+
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>2.3.2.RELEASE</version>
+        <relativePath/> <!-- lookup parent from repository -->
+    </parent>
 
 
 </project>
