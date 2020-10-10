@@ -9,5 +9,12 @@
         <module name="notification" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="cleaner-service" target="1.8" />
+      <module name="database-service" target="1.8" />
+      <module name="notification-service" target="1.8" />
+      <module name="parser-service" target="1.8" />
+      <module name="ui-service" target="1.8" />
+    </bytecodeTargetLevel>
   </component>
 </project>
