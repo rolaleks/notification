@@ -107,7 +107,7 @@ PersonalData – информация с персональными данным
    </tr>
    <tr>
      <td> City</td>
-     <td>Id <br>name <br>country <br>region <br>list[area] </td>
+     <td>Id <br>name <br>country <br>region <br>list[District] </td>
      <td>City should always have a country but not always have a region, in this case you should to use pre-created an empty region.</td>
    </tr>
    <tr>
