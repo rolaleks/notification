@@ -2,6 +2,7 @@ package ru.geekbrains.entities;
 
 import lombok.Data;
 import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
 
 import javax.persistence.*;
 import java.util.List;
@@ -23,10 +24,10 @@ public class Street {
     private District district;
 
     @OneToMany(mappedBy = "street")
-    @Cascade(org.hibernate.annotations.CascadeType.ALL)
+    @Cascade(CascadeType.ALL)
     private List<GroupAd> groupAds;
 
     @OneToMany(mappedBy = "street")
-    @Cascade(org.hibernate.annotations.CascadeType.ALL)
+    @Cascade(CascadeType.ALL)
     private List<Ad> ads;
 }

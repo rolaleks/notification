@@ -1,6 +1,8 @@
 package ru.geekbrains.entities;
 
 import lombok.Data;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
 
 import javax.persistence.*;
 import java.util.List;
@@ -20,6 +22,7 @@ public class GroupAd {
     @Column(name = "district_id")
     private District district;
 
-    @Column(name = "ads_id")
+    @OneToMany(mappedBy = "group_ad")
+    @Cascade(CascadeType.ALL)
     private List<Ad> ads;
 }

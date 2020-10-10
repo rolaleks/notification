@@ -2,6 +2,7 @@ package ru.geekbrains.entities;
 
 import lombok.Data;
 import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
 
 import javax.persistence.*;
 import java.util.List;
@@ -20,6 +21,6 @@ public class Region {
     private Country country;
 
     @OneToMany(mappedBy = "region")
-    @Cascade(org.hibernate.annotations.CascadeType.ALL)
+    @Cascade(CascadeType.ALL)
     private List<City> cities;
 }

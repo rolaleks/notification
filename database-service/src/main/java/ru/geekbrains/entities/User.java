@@ -2,9 +2,12 @@ package ru.geekbrains.entities;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
 
 import javax.persistence.*;
 import java.util.Collection;
+import java.util.List;
 
 @Data
 @Entity
@@ -28,8 +31,9 @@ public class User {
     @Column(name = "surname")
     private String surname;
 
-    @Column(name = "settings")
-    private Settings settings;
+    @OneToMany(mappedBy = "user")
+    @Cascade(CascadeType.ALL)
+    private List<Settings> settings;
 
     @ManyToMany
     @JoinTable(name = "users_roles",

@@ -2,6 +2,7 @@ package ru.geekbrains.entities;
 
 import lombok.Data;
 import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
 
 import javax.persistence.*;
 import java.util.List;
@@ -23,6 +24,6 @@ public class District {
     private City city;
 
     @OneToMany(mappedBy = "district")
-    @Cascade(org.hibernate.annotations.CascadeType.ALL)
+    @Cascade(CascadeType.ALL)
     private List<Street> streets;
 }
