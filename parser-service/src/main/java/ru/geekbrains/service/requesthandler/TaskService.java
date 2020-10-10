@@ -34,5 +34,13 @@ public class TaskService {
         tasks.poll();
     }
 
+    public boolean isEmpty(){
+        if(tasks.size() > 0){
+            return false;
+        } else {
+            return true;
+        }
+    }
+
 
 }
