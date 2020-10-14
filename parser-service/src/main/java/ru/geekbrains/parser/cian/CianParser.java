@@ -4,9 +4,9 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 import org.springframework.stereotype.Component;
-import ru.geekbrains.parser.cian.temp.Ad;
-import ru.geekbrains.parser.cian.temp.Address;
-
+import ru.geekbrains.entities.Ad;
+import ru.geekbrains.entities.Address;
+import
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
