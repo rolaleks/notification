@@ -1,12 +1,15 @@
-package ru.geekbrains.service.parserservice;
+package ru.geekbrains.model;
+
+import lombok.Data;
 
 import java.util.HashMap;
 import java.util.Map;
 
+@Data
 public class Parser {
-    public String name;
+    private String name;
     private boolean processing = false;
-    void start(String country, String city){};
+    public void start(String country, String city){};
     //исправить Object -> Ad
     Map<String, Object> getResult() {
         return new HashMap<>();
