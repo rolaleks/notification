@@ -26,6 +26,9 @@ import java.util.Map;
 @Service
 public class AvitoClient {
 
+
+    public static final Integer SORT_NEW_FIRST = 104;
+
     private final CloseableHttpClient httpClient = HttpClients.createDefault();
 
     @Value("${parsers.avito.baseUrl:https://www.avito.ru}")
@@ -64,6 +67,11 @@ public class AvitoClient {
         params.add(new BasicNameValuePair("p", page.toString()));
 
         return sendGet(baseUrl + cityPrefix + apartmentCategoryUrlPath, params);
+    }
+
+    public String apartmentPage(String url) {
+
+        return sendGet(baseUrl + url, new ArrayList<>());
     }
 
     private String sendGet(String url, List<NameValuePair> getParameters) {
@@ -118,5 +126,9 @@ public class AvitoClient {
         }
 
         return null;
+    }
+
+    public String getBaseUrl() {
+        return baseUrl;
     }
 }
