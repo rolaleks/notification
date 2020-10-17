@@ -1,15 +1,16 @@
 package ru.geekbrains.service.requesthandler;
 
 import lombok.extern.java.Log;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.geekbrains.model.Task;
 import java.util.LinkedList;
 import java.util.Queue;
 
-@Log
+@Slf4j
 @Service
 public class TaskService {
-    private Queue<Task> tasks = new LinkedList<>();
+    private volatile Queue<Task> tasks = new LinkedList<>();
 
     public boolean add(Task task){
         if (!tasks.contains(task)) {
@@ -32,6 +33,10 @@ public class TaskService {
     public void poll(){
         log.info("задача удалена");
         tasks.poll();
+    }
+
+    public boolean isEmpty(){
+        return tasks.isEmpty();
     }
 
 
