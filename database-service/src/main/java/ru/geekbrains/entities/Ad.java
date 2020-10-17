@@ -1,6 +1,8 @@
 package ru.geekbrains.entities;
 
+import lombok.AccessLevel;
 import lombok.Data;
+import lombok.experimental.FieldDefaults;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -8,37 +10,38 @@ import java.math.BigDecimal;
 @Data
 @Entity
 @Table(name = "ads")
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class Ad {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private Long id;
+    Long id;
 
     @ManyToOne
     @JoinColumn(name = "address_id")
-    private Address address;
+    Address address;
 
     @Column(name = "qua_rooms")
-    private Byte quantity;
+    Byte quantity;
 
     @Column(name = "quadrature")
-    private Short quadrature;
+    Short quadrature;
 
     @Column(name = "period")
-    private String period;
+    String period;
 
     @Column(name = "price")
-    private BigDecimal price;
+    BigDecimal price;
 
     @Column(name = "details_price")
-    private String detailsPrice;
+    String detailsPrice;
 
     @Column(name = "title")
-    private String title;
+    String title;
 
     @Column(name = "description")
-    private String description;
+    String description;
 
     @Column(name = "link")
-    private String link;
+    String link;
 }

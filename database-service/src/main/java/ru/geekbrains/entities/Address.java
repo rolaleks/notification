@@ -1,35 +1,38 @@
 package ru.geekbrains.entities;
 
+import lombok.AccessLevel;
 import lombok.Data;
+import lombok.experimental.FieldDefaults;
 
 import javax.persistence.*;
 
 @Data
 @Entity
 @Table(name = "addresses")
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class Address {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private Long id;
+    Long id;
 
     @ManyToOne
     @JoinColumn(name = "country_id")
-    private Country country;
+    Country country;
 
     @ManyToOne
     @JoinColumn(name = "region_id")
-    private Region region;
+    Region region;
 
     @ManyToOne
     @JoinColumn(name = "city_id")
-    private City city;
+    City city;
 
     @ManyToOne
     @JoinColumn(name = "district_id")
-    private District district;
+    District district;
 
     @ManyToOne
     @JoinColumn(name = "street_id")
-    private Street street;
+    Street street;
 }

@@ -1,6 +1,8 @@
 package ru.geekbrains.entities;
 
+import lombok.AccessLevel;
 import lombok.Data;
+import lombok.experimental.FieldDefaults;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
 
@@ -9,14 +11,15 @@ import java.util.List;
 
 @Entity
 @Data
-@Table(name = "settings")
-public class Settings {
+@Table(name = "profiles")
+@FieldDefaults(level = AccessLevel.PRIVATE)
+public class Profile {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private Long id;
+    Long id;
 
-    @OneToMany(mappedBy = "setting")
+    @OneToMany(mappedBy = "profile")
     @Cascade(CascadeType.ALL)
-    private List<PersonalData> personalData;
+    List<PersonalData> personalData;
 }
