@@ -2,8 +2,10 @@ package ru.geekbrains.service.parserservice;
 
 import lombok.Data;
 import lombok.extern.java.Log;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.geekbrains.model.Parser;
 import ru.geekbrains.model.Task;
 import ru.geekbrains.service.requesthandler.TaskService;
 
@@ -15,7 +17,7 @@ import java.util.*;
  * Если работа всех парсеров завершена, он получает результаты, удаляет задачу из taskService и отправляет инфу в callbackService.
  */
 @Data
-@Log
+@Slf4j
 @Service
 public class ParserService {
 
@@ -72,7 +74,7 @@ public class ParserService {
     private void checkResult(){
         parsers.forEach(p -> {
             if(!p.getProcessingStatus()){
-                log.info("getting results from " + p.name);
+                log.info("getting results from " + p.getName());
                 //получаем список
                 //ads.putAll(p.getResult());
             }
@@ -80,7 +82,7 @@ public class ParserService {
     }
 
     public void register(Parser parser){
-        log.info(String.format("parser %s has been registered", parser.name));
+        log.info(String.format("parser %s has been registered", parser.getName()));
         parsers.add(parser);
     }
 }
