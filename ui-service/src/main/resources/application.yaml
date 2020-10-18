@@ -3,14 +3,33 @@ server:
   servlet:
     context-path:
 spring:
+    datasource:
+      driver-class-name: org.h2.Driver
+      url: jdbc:h2:mem:mydatabase;MODE=PostgreSQL
+      username: sa
+      password:
 
-#  thymeleaf:
+#create
+      initialization-mode: always
+    jpa:
+#      generate-ddl: true
+      hibernate:
+        ddl-auto: none
+#--------
+
+  #  thymeleaf:
 #    encoding: UTF-8
 #    prefix: file:ui-service/src/main/resources/templates/
 #    cache: false
 #  resources:
 #    static-locations: file:ui-service/src/main/resources/static/
 
-  jackson:
-    serialization:
-      indent_output: true
+#  jackson:
+#    serialization:
+#      indent_output: true
+
+
+jwt:
+  header: Authorization
+  secret: proselyte
+  expiration: 604800

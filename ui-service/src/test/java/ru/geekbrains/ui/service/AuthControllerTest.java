@@ -11,10 +11,11 @@ import ru.geekbrains.ui.service.validation.RegistrationUser;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
-@AutoConfigureMockMvc
+@AutoConfigureMockMvc(addFilters = false)
 public class AuthControllerTest {
 
     @Autowired
@@ -48,10 +49,11 @@ public class AuthControllerTest {
     @Test
     void processAuthForm() throws Exception {
         AuthUser authUser = new AuthUser();
-        authUser.setLogin("sfsdafasf");
-        authUser.setLogin("safsdfsdf");
+        authUser.setLogin("1");
+        authUser.setPassword("1");
         mvc.perform(post("http://localhost:8080/auth/process")
                 .flashAttr("authUser", authUser))
-                .andExpect(status().is2xxSuccessful());
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/home"));
     }
 }
