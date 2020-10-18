@@ -1,43 +1,43 @@
 package ru.geekbrains.entities;
 
+import lombok.AccessLevel;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.CascadeType;
+import lombok.experimental.FieldDefaults;
 
 import javax.persistence.*;
 import java.util.Collection;
-import java.util.List;
 
 @Data
 @Entity
 @NoArgsConstructor
 @Table(name = "users")
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private Long id;
+    Long id;
 
     @Column(name = "login")
-    private String login;
+    String login;
 
     @Column(name = "password")
-    private String password;
+    String password;
 
     @Column(name = "name")
-    private String name;
+    String name;
 
     @Column(name = "surname")
-    private String surname;
+    String surname;
 
-    @OneToMany(mappedBy = "user")
-    @Cascade(CascadeType.ALL)
-    private List<Settings> settings;
+    @PrimaryKeyJoinColumn
+    @OneToOne(cascade = CascadeType.ALL)
+    private Profile profile;
 
     @ManyToMany
     @JoinTable(name = "users_roles",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
-    private Collection<Role> roles;
+    Collection<Role> roles;
 }

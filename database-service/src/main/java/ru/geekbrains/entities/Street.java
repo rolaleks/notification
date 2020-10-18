@@ -1,6 +1,8 @@
 package ru.geekbrains.entities;
 
+import lombok.AccessLevel;
 import lombok.Data;
+import lombok.experimental.FieldDefaults;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
 
@@ -10,24 +12,25 @@ import java.util.List;
 @Data
 @Entity
 @Table(name = "streets")
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class Street {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private Long id;
+    Long id;
 
     @Column(name = "name")
-    private String name;
+    String name;
 
     @ManyToOne
     @JoinColumn(name = "district_id")
-    private District district;
+    District district;
 
     @OneToMany(mappedBy = "street")
     @Cascade(CascadeType.ALL)
-    private List<GroupAd> groupAds;
+    List<GroupAd> groupAds;
 
     @OneToMany(mappedBy = "street")
     @Cascade(CascadeType.ALL)
-    private List<Ad> ads;
+    List<Ad> ads;
 }
