@@ -20,13 +20,13 @@ public class GroupAd {
     @Column(name = "id")
     Long id;
 
-    @Column(name = "address_id")
-    Address address;
+    //@Column(name = "address_id")
+    //Address address;
 
-    @Column(name = "district_id")
-    District district;
+    //@Column(name = "district_id")
+    //District district;
 
-    @OneToMany(mappedBy = "group_ad")
-    @Cascade(CascadeType.ALL)
-    List<Ad> ads;
+    //@OneToMany(mappedBy = "group_ad")
+    //@Cascade(CascadeType.ALL)
+    //List<Ad> ads;
 }
