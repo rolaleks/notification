@@ -9,7 +9,7 @@ import javax.persistence.*;
 import java.util.List;
 
 @Entity
-@Table(name = "cities")
+@Table(name = "cities", schema = "geo")
 @Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class City {

@@ -11,7 +11,7 @@ import java.util.List;
 
 @Data
 @Entity
-@Table(name = "regions")
+@Table(name = "regions", schema = "geo")
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Region {
     @Id

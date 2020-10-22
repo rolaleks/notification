@@ -11,7 +11,7 @@ import java.util.List;
 
 @Data
 @Entity
-@Table(name = "streets")
+@Table(name = "streets", schema = "geo")
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Street {
     @Id
@@ -26,11 +26,11 @@ public class Street {
     @JoinColumn(name = "district_id")
     District district;
 
-    @OneToMany(mappedBy = "street")
-    @Cascade(CascadeType.ALL)
-    List<GroupAd> groupAds;
+    //@OneToMany(mappedBy = "street")
+    //@Cascade(CascadeType.ALL)
+    //List<GroupAd> groupAds;
 
-    @OneToMany(mappedBy = "street")
-    @Cascade(CascadeType.ALL)
-    List<Ad> ads;
+    //@OneToMany(mappedBy = "street")
+    //@Cascade(CascadeType.ALL)
+    //List<Ad> ads;
 }

@@ -10,7 +10,7 @@ import javax.persistence.*;
 import java.util.List;
 
 @Entity
-@Table(name = "districts")
+@Table(name = "districts", schema = "geo")
 @Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class District {
