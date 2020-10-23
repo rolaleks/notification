@@ -10,7 +10,7 @@ import java.util.List;
 
 @Data
 @Entity
-@Table(name = "countries")
+@Table(name = "countries", schema = "geo")
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Country {
     @Id
@@ -24,4 +24,16 @@ public class Country {
     @OneToMany(mappedBy = "country")
     @Cascade(org.hibernate.annotations.CascadeType.ALL)
     List<Region> regions;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Long getId() {
+        return id;
+    }
 }

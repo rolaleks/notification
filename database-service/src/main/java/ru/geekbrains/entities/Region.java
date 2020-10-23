@@ -11,13 +11,16 @@ import java.util.List;
 
 @Data
 @Entity
-@Table(name = "regions")
+@Table(name = "regions", schema = "geo")
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Region {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     Long id;
+
+    @Column(name = "name")
+    String name;
 
     @ManyToOne
     @JoinColumn(name = "country_id")

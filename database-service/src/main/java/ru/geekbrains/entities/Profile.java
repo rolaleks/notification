@@ -19,7 +19,7 @@ public class Profile {
     @Column(name = "id")
     Long id;
 
-    @OneToMany(mappedBy = "profile")
-    @Cascade(CascadeType.ALL)
-    List<PersonalData> personalData;
+    //@OneToMany(mappedBy = "profile")
+    //@Cascade(CascadeType.ALL)
+    //List<PersonalData> personalData;
 }
