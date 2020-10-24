@@ -1,4 +1,4 @@
-package ru.geekbrains.entities;
+package ru.geekbrains.entities.user;
 
 import lombok.AccessLevel;
 import lombok.Data;
@@ -11,7 +11,7 @@ import javax.persistence.*;
 @Entity
 @Data
 @NoArgsConstructor
-@Table(name = "roles")
+@Table(name = "roles", schema = "client")
 @EqualsAndHashCode
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Role {
