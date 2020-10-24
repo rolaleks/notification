@@ -16,6 +16,9 @@ public class Region {
     @Column(name = "id")
     private Long id;
 
+    @Column(name = "name")
+    private String name;
+
     @ManyToOne
     @JoinColumn(name = "country_id")
     private Country country;
