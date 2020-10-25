@@ -4,6 +4,7 @@ import lombok.AccessLevel;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import ru.geekbrains.entities.Profile;
 
 import javax.persistence.*;
 import java.util.Collection;
