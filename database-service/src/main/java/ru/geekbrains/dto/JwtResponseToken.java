@@ -1,10 +1,10 @@
-package ru.geekbrains.ui.service.model.user.dto;
+package ru.geekbrains.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class JwtResponse {
+public class JwtResponseToken {
     private String token;
 }

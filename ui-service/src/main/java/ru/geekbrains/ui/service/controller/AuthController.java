@@ -4,18 +4,16 @@ package ru.geekbrains.ui.service.controller;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
+import org.springframework.http.*;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 import ru.geekbrains.ui.service.bean.Token;
-import ru.geekbrains.ui.service.service.UserDetailsServiceImplements;
 import ru.geekbrains.ui.service.validation.AuthUser;
 import ru.geekbrains.ui.service.validation.RegistrationUser;
 
@@ -34,7 +32,7 @@ public class AuthController {
 
 
     private final Token token;
-    private final UserDetailsServiceImplements userDetailsServiceImplements;
+    private final RestTemplate restTemplate;
     private final AuthenticationManager authenticationManager;
 
 
@@ -79,16 +77,13 @@ public class AuthController {
         if (bindingResult.hasErrors()) {
             return "auth/auth-form";
         }
-        try {
-            authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(authUser.getLogin(), authUser.getPassword()));
-        } catch (BadCredentialsException ex) {
-            model.addAttribute("info", "неверный логин или пароль");
-            return "auth/auth-form";
-        }
-        UserDetails userDetails = userDetailsServiceImplements.loadUserByUsername(authUser.getLogin());
-        String token1 = token.generateToken(userDetails);
-        log.info("token " + token1);
+
+        String url = "http://localhost:8081/auht/login";
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<String> request = new HttpEntity<>(authUser.toString(), headers);
+        ResponseEntity<String> responseEntity = restTemplate.exchange(url, HttpMethod.POST, request, String.class);
+
         return "redirect:/home";
     }
 

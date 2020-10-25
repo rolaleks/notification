@@ -1,4 +1,4 @@
-package ru.geekbrains.entities;
+package ru.geekbrains.entities.user;
 
 import lombok.AccessLevel;
 import lombok.Data;
@@ -9,8 +9,9 @@ import javax.persistence.*;
 import java.util.Collection;
 
 @Data
-//@Entity
-//@Table(name = "users")
+@Entity
+@NoArgsConstructor
+@Table(name = "users", schema = "client")
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class User {
     @Id
@@ -33,6 +34,10 @@ public class User {
     @PrimaryKeyJoinColumn
     @OneToOne(cascade = CascadeType.ALL)
     private Profile profile;
+
+    @Enumerated(value = EnumType.STRING)
+    @Column(name = "status")
+    private Status status;
 
     @ManyToMany
     @JoinTable(name = "users_roles",

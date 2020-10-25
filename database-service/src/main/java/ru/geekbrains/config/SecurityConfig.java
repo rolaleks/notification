@@ -1,4 +1,4 @@
-package ru.geekbrains.ui.service.config;
+package ru.geekbrains.config;
 
 
 import lombok.AllArgsConstructor;
@@ -11,7 +11,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.client.RestTemplate;
 
 
 @Configuration
@@ -20,17 +19,12 @@ import org.springframework.web.client.RestTemplate;
 @AllArgsConstructor
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    @Bean
-    public RestTemplate restTemplate() {
-        return new RestTemplate();
-    }
-
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests()
                 .antMatchers("/**").permitAll()
-                .antMatchers("/auth/**", "/favicon.ico").permitAll()
+                .antMatchers("/auth/**").permitAll()
                 .anyRequest().authenticated();
     }
 
