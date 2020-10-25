@@ -1,4 +1,4 @@
-package ru.geekbrains.ui.service.jwt;
+package ru.geekbrains.jwt;
 
 
 import io.jsonwebtoken.ExpiredJwtException;
@@ -8,8 +8,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-import ru.geekbrains.ui.service.bean.Token;
-import ru.geekbrains.ui.service.exceptions.JwtAuthenticationException;
+import ru.geekbrains.exceptions.JwtAuthenticationException;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -23,16 +22,14 @@ import java.io.IOException;
 public class JwtRequestFilter extends OncePerRequestFilter {
 
     private final JwtTokenProvider jwtTokenProvider;
-    private final Token token;
+
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
         String authHeader = request.getHeader("Authorization");
-        if (token.getToken() != null && authHeader == null) {
-            authHeader = "Bearer " + token.getToken();
-        }
+
         log.info("Authorization token " + authHeader);
         String username = null;
         String jwt = null;

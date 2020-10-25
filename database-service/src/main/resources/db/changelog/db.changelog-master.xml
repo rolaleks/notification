@@ -17,4 +17,10 @@
     <changeSet id="2" author="alex">
         <tagDatabase tag="ads_init"/>
     </changeSet>
+
+    <include file="v-1.0_bot_state_init/db.changelog-v.1.0.xml" relativeToChangelogFile="true"/>
+    <changeSet id="4" author="Artem Pugachev">
+        <tagDatabase tag="ads_init"/>
+    </changeSet>
+
 </databaseChangeLog>

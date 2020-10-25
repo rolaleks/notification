@@ -2,24 +2,29 @@ package ru.geekbrains.entities;
 
 import lombok.AccessLevel;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
 
 import javax.persistence.*;
 
-@Entity
 @Data
-@NoArgsConstructor
-@Table(name = "roles")
-@EqualsAndHashCode
+//@Entity
+//@Table(name = "personal_data")
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class Role {
+public class PersonalData {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     Long id;
 
-    @Column(name = "name")
-    String name;
+    @Column(name = "whats_app")
+    Integer whatsApp;
+
+    @Column(name = "facebook")
+    String facebook;
+
+    @Column(name = "telegram")
+    String telegram;
+
+    @Column(name = "email")
+    String email;
 }

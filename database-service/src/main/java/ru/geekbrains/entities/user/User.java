@@ -1,9 +1,10 @@
-package ru.geekbrains.entities;
+package ru.geekbrains.entities.user;
 
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import ru.geekbrains.entities.Profile;
 
 import javax.persistence.*;
 import java.util.Collection;
@@ -11,7 +12,7 @@ import java.util.Collection;
 @Data
 @Entity
 @NoArgsConstructor
-@Table(name = "users")
+@Table(name = "users", schema = "client")
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class User {
     @Id
@@ -34,6 +35,10 @@ public class User {
     @PrimaryKeyJoinColumn
     @OneToOne(cascade = CascadeType.ALL)
     private Profile profile;
+
+    @Enumerated(value = EnumType.STRING)
+    @Column(name = "status")
+    private Status status;
 
     @ManyToMany
     @JoinTable(name = "users_roles",

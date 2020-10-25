@@ -10,8 +10,8 @@ import javax.persistence.*;
 import java.util.List;
 
 @Data
-@Entity
-@Table(name = "groups_ad")
+//@Entity
+//@Table(name = "groups_ad")
 @FieldDefaults(level = AccessLevel.PRIVATE)
 
 public class GroupAd {

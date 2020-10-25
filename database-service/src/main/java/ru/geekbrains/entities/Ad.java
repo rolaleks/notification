@@ -6,6 +6,7 @@ import lombok.experimental.FieldDefaults;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
+import java.time.OffsetDateTime;
 
 @Data
 @Entity
@@ -51,10 +52,10 @@ public class Ad {
     Boolean isActive;
 
     @Column(name = "created_at")
-    String createdAt;
+    OffsetDateTime createdAt;
 
     @Column(name = "updated_at")
-    String updatedAt;
+    OffsetDateTime updatedAt;
 
     @ManyToOne
     @JoinColumn(name = "address_id")

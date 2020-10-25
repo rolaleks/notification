@@ -20,7 +20,7 @@ public class Address {
     String house;
 
     @Column(name = "floors_count")
-    Integer floorsCount;
+    Short floorsCount;
 
     @ManyToOne
     @JoinColumn(name = "street_id")
