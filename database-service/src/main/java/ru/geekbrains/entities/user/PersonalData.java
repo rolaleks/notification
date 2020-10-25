@@ -1,4 +1,4 @@
-package ru.geekbrains.entities;
+package ru.geekbrains.entities.user;
 
 import lombok.AccessLevel;
 import lombok.Data;
@@ -8,7 +8,7 @@ import javax.persistence.*;
 
 @Data
 @Entity
-@Table(name = "personal_data")
+@Table(name = "personal_data", schema = "client")
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class PersonalData {
     @Id

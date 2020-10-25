@@ -1,4 +1,4 @@
-package ru.geekbrains.entities;
+package ru.geekbrains.entities.user;
 
 import lombok.AccessLevel;
 import lombok.Data;
@@ -11,7 +11,7 @@ import java.util.List;
 
 @Entity
 @Data
-@Table(name = "profiles")
+@Table(name = "profiles", schema = "client")
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Profile {
     @Id

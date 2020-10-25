@@ -17,4 +17,8 @@
     <changeSet id="2" author="alex">
         <tagDatabase tag="ads_init"/>
     </changeSet>
+    <include file="v-1.1_user_init/db.changelog-v.1.1.xml" relativeToChangelogFile="true"/>
+    <changeSet id="4" author="pavelk">
+        <tagDatabase tag="user_init"/>
+    </changeSet>
 </databaseChangeLog>
