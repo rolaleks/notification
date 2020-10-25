@@ -8,7 +8,7 @@ import javax.persistence.*;
 
 @Data
 @Entity
-@Table(name = "addresses")
+@Table(name = "addresses", schema = "geo")
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Address {
     @Id
@@ -16,21 +16,11 @@ public class Address {
     @Column(name = "id")
     Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "country_id")
-    Country country;
+    @Column(name = "house")
+    String house;
 
-    @ManyToOne
-    @JoinColumn(name = "region_id")
-    Region region;
-
-    @ManyToOne
-    @JoinColumn(name = "city_id")
-    City city;
-
-    @ManyToOne
-    @JoinColumn(name = "district_id")
-    District district;
+    @Column(name = "floors_count")
+    Short floorsCount;
 
     @ManyToOne
     @JoinColumn(name = "street_id")

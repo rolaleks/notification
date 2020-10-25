@@ -8,10 +8,9 @@ import lombok.experimental.FieldDefaults;
 
 import javax.persistence.*;
 
-@Entity
+//@Entity
 @Data
-@NoArgsConstructor
-@Table(name = "roles")
+//@Table(name = "roles")
 @EqualsAndHashCode
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Role {

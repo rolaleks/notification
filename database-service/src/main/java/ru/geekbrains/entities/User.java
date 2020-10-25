@@ -9,9 +9,8 @@ import javax.persistence.*;
 import java.util.Collection;
 
 @Data
-@Entity
-@NoArgsConstructor
-@Table(name = "users")
+//@Entity
+//@Table(name = "users")
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class User {
     @Id

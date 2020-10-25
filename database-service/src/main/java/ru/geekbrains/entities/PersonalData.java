@@ -7,8 +7,8 @@ import lombok.experimental.FieldDefaults;
 import javax.persistence.*;
 
 @Data
-@Entity
-@Table(name = "personal_data")
+//@Entity
+//@Table(name = "personal_data")
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class PersonalData {
     @Id

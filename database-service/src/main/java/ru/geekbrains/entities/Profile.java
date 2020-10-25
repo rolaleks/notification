@@ -9,9 +9,9 @@ import org.hibernate.annotations.CascadeType;
 import javax.persistence.*;
 import java.util.List;
 
-@Entity
+//@Entity
 @Data
-@Table(name = "profiles")
+//@Table(name = "profiles")
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Profile {
     @Id
