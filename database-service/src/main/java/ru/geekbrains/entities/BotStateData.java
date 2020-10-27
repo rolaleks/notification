@@ -1,6 +1,7 @@
 package ru.geekbrains.entities;
 
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
 
@@ -8,21 +9,18 @@ import javax.persistence.*;
 
 @Data
 @Entity
-@Table(name = "addresses", schema = "geo")
+@AllArgsConstructor
+@Table(name = "state_data", schema = "bot")
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class Address {
+public class BotStateData {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     Long id;
 
-    @Column(name = "house")
-    String house;
+    @Column(name = "chat_id", unique = true)
+    String chatId;
 
-    @Column(name = "floors_count")
-    Short floorsCount;
-
-    @ManyToOne
-    @JoinColumn(name = "street_id")
-    Street street;
+    @Column(name = "state")
+    int state;
 }

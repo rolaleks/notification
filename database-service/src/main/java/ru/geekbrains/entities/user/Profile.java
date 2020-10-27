@@ -1,4 +1,4 @@
-package ru.geekbrains.entities;
+package ru.geekbrains.entities.user;
 
 import lombok.AccessLevel;
 import lombok.Data;
@@ -9,24 +9,17 @@ import org.hibernate.annotations.CascadeType;
 import javax.persistence.*;
 import java.util.List;
 
+@Entity
 @Data
-//@Entity
-//@Table(name = "groups_ad")
+@Table(name = "profiles", schema = "client")
 @FieldDefaults(level = AccessLevel.PRIVATE)
-
-public class GroupAd {
+public class Profile {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     Long id;
 
-    //@Column(name = "address_id")
-    //Address address;
-
-    //@Column(name = "district_id")
-    //District district;
-
-    //@OneToMany(mappedBy = "group_ad")
+    //@OneToMany(mappedBy = "profile")
     //@Cascade(CascadeType.ALL)
-    //List<Ad> ads;
+    //List<PersonalData> personalData;
 }
