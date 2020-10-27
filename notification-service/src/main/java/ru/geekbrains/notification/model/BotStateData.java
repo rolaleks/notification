@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class BotData {
+public class BotStateData {
     long chatId;
     int state;
 }
