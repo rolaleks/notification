@@ -24,7 +24,6 @@ public class TokenFilter implements Filter {
         if (token.getToken() != null) {
             resp.setHeader("Authorization", token.getToken());
         }
-        resp.setHeader("Test5", "test2 " + token.getToken());
         chain.doFilter(req, resp);
     }
 
