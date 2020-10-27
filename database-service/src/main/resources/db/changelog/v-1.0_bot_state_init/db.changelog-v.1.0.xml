@@ -5,7 +5,7 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd"
 >
-    <changeSet id="3" author="Artem Pugachev">
+    <changeSet id="5" author="Artem Pugachev">
         <sqlFile dbms="postgresql"
                  encoding="utf8"
                  endDelimiter="\nGo"

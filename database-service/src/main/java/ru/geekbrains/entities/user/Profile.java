@@ -9,9 +9,9 @@ import org.hibernate.annotations.CascadeType;
 import javax.persistence.*;
 import java.util.List;
 
-//@Entity
+@Entity
 @Data
-//@Table(name = "profiles")
+@Table(name = "profiles", schema = "client")
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Profile {
     @Id
@@ -19,7 +19,7 @@ public class Profile {
     @Column(name = "id")
     Long id;
 
-//    @OneToMany(mappedBy = "profile")
-//    @Cascade(CascadeType.ALL)
-//    List<PersonalData> personalData;
+    //@OneToMany(mappedBy = "profile")
+    //@Cascade(CascadeType.ALL)
+    //List<PersonalData> personalData;
 }
