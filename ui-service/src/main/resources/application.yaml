@@ -17,3 +17,6 @@ jwt:
   header: Authorization
   secret: proselyte
   expiration: 604800
+
+db:
+  url: "http://localhost:8079"

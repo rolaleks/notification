@@ -45,6 +45,23 @@ GO
 
 alter table if exists users_roles add constraint FK2o0jvgh89lemvvo17cbqvdxaa foreign key (user_id) references client.users
 
+GO
+
+insert into client.roles (name)
+values ('ADMIN'),
+       ('USER')
+
+GO
+
+create table users_roles (
+                             user_id               int8 NOT NULL,
+                             role_id               int8 NOT NULL,
+                             primary key (user_id, role_id),
+                             FOREIGN KEY (user_id)  REFERENCES client.users (id),
+                             FOREIGN KEY (role_id)  REFERENCES client.roles (id)
+)
+
+
 -- GO
 --
 -- insert into client.users (login, password, name, surname, status)
@@ -53,31 +70,6 @@ alter table if exists users_roles add constraint FK2o0jvgh89lemvvo17cbqvdxaa for
 --        ('3', '$2y$12$6xsSxUKsOFUvcDc3wVbuZ.JsW5Kg/4fvhcc7JDYuoarpWI97yf9sO', 'user', 'BANNED');
 
 
--- GO
---
--- create table client.roles
--- (
---     id   bigserial,
---     name varchar(30) not null unique,
---     primary key (id)
--- );
-
--- GO
---
--- insert into client.roles (name)
--- values ('ADMIN'),
---        ('USER');
-
-
--- GO
---
--- create table users_roles (
---                              user_id               INT NOT NULL,
---                              role_id               INT NOT NULL,
---                              primary key (user_id, role_id),
---                              FOREIGN KEY (user_id)  REFERENCES client.users (id),
---                              FOREIGN KEY (role_id)  REFERENCES client.roles (id)
--- );
 
 -- GO
 --
