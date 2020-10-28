@@ -9,7 +9,8 @@
         <module>ui-service</module>
         <module>parser-service</module>
         <module>notification-service</module>
-        <module>database-service</module>
+        <module>rest-service</module>
+        <module>database</module>
     </modules>
 
     <properties>

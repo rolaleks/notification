@@ -1,9 +1,7 @@
 package ru.geekbrains.notification.service;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -17,12 +15,12 @@ public class BotStateService {
 
         UriComponentsBuilder builder = UriComponentsBuilder
                 .fromHttpUrl("http://localhost:8079/")
-                .path("/stage")
+                .path("/state")
                 .queryParam("chatId", String.valueOf(chatId));
 
         String url = builder.build().encode().toUriString();
         log.info(url);
-        RestTemplate restTemplate = new RestTemplate();
+//        RestTemplate restTemplate = new RestTemplate();
 
         try {
             return new RestTemplate().exchange(url, HttpMethod.GET, null, BotStateData.class).getBody();
@@ -34,12 +32,17 @@ public class BotStateService {
     public void save(BotStateData botStateData){
         UriComponentsBuilder builder = UriComponentsBuilder
                 .fromHttpUrl("http://localhost:8079/")
-                .path("/stage")
-                .queryParam("botStateData", botStateData);
+                .path("/state");
 
         String url = builder.build().encode().toUriString();
-        ResponseEntity<BotStateData> responseEntity = new RestTemplate().exchange(url, HttpMethod.POST, null, BotStateData.class);
-        checkingHttpStatus(responseEntity.getStatusCode());
+        HttpHeaders requestHeaders = new HttpHeaders();
+        requestHeaders.setContentType(MediaType.APPLICATION_JSON);
+
+        HttpEntity<?> httpEntity = new HttpEntity<Object>(botStateData, requestHeaders);
+
+        RestTemplate restTemplate = new RestTemplate();
+        restTemplate.exchange(url, HttpMethod.POST, httpEntity, BotStateData.class);
+//        checkingHttpStatus(responseEntity.getStatusCode());
     }
 
     public void checkingHttpStatus(HttpStatus status){
