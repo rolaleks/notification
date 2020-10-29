@@ -3,6 +3,7 @@ package ru.geekbrains.entity;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
 
 import javax.persistence.*;
@@ -10,6 +11,7 @@ import javax.persistence.*;
 @Data
 @Entity
 @AllArgsConstructor
+@NoArgsConstructor
 @Table(name = "state_data", schema = "bot")
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class BotStateData {
