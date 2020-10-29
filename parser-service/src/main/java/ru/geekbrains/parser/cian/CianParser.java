@@ -46,6 +46,7 @@ import static java.util.stream.Collectors.groupingBy;
 public class CianParser {
 
     private DataExtractor dataExtractor;
+    private Map<Address, List<Ad>> addressAdMap;
 
     @Autowired
     public void setDataExtractor(DataExtractor dataExtractor) {
@@ -68,6 +69,7 @@ public class CianParser {
         String regionCode = "1"; // это заглушка (код москвы), пока нет решения как соответствовать кодам городов на Циан
         String pageValue = "1";
         boolean hasNextPage = true;
+        List<Ad> adsFromParse = new ArrayList<>();
 
         while (!pageValue.equals("3")) { // uncomment to limit search deep to 2 pages
 //        while (hasNextPage) {  // uncomment to search throughout all the target pages
