@@ -1,6 +1,5 @@
 package ru.geekbrains.parser.cian;
 
-import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.client.utils.URIBuilder;
 import org.jsoup.Jsoup;
@@ -11,10 +10,10 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import ru.geekbrains.entities.Ad;
-import ru.geekbrains.entities.Address;
+import ru.geekbrains.entity.Ad;
+import ru.geekbrains.entity.Address;
+import ru.geekbrains.parser.cian.utils.DataExtractor;
 
-import javax.swing.*;
 import java.util.*;
 
 /**

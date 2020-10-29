@@ -1,12 +1,9 @@
-package ru.geekbrains.parser.cian;
+package ru.geekbrains.parser.cian.utils;
 
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.stereotype.Component;
-import ru.geekbrains.entities.*;
-import ru.geekbrains.parser.cian.utils.PeriodNotFoundException;
-import ru.geekbrains.parser.cian.utils.PriceNotFoundException;
-import ru.geekbrains.parser.cian.utils.SquareInfoNotFoundException;
+import ru.geekbrains.entity.*;
 import ru.geekbrains.utils.*;
 
 import java.math.BigDecimal;

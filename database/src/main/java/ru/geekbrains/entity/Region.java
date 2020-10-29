@@ -22,9 +22,6 @@ public class Region {
     @Column(name = "name")
     String name;
 
-    @Column(name = "name")
-    private String name;
-
     @ManyToOne
     @JoinColumn(name = "country_id")
     Country country;
