@@ -69,7 +69,8 @@ public class CianParser {
         String pageValue = "1";
         boolean hasNextPage = true;
 
-        while (hasNextPage) {
+        while (!pageValue.equals("3")) { // uncomment to limit search deep to 2 pages
+//        while (hasNextPage) {  // uncomment to search throughout all the target pages
 
             URIBuilder uri = new URIBuilder();
             uri.setScheme("https")
