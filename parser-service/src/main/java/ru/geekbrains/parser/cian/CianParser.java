@@ -102,6 +102,8 @@ public class CianParser {
                 newAd.setDescription(dataExtractor.getDescription(adTag));
                 newAd.setTitle(dataExtractor.getTitle(adTag));
                 newAd.setLink(dataExtractor.getLink(adTag));
+                adsFromParse.add(newAd);
+
             }
             String pageValueMark = document.selectFirst("div[data-name~=^Pagination]").getElementsByTag("li").last().children().first().text();
             if (!pageValueMark.equals("..")) {
