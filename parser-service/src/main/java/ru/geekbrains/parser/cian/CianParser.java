@@ -16,6 +16,8 @@ import ru.geekbrains.parser.cian.utils.DataExtractor;
 
 import java.util.*;
 
+import static java.util.stream.Collectors.groupingBy;
+
 /**
  * Has methods to parse html from cian.ru
  * <p>
@@ -106,6 +108,7 @@ public class CianParser {
             pageValue = String.valueOf(Integer.parseInt(pageValue) + 1);
 
         }
+        addressAdMap = adsFromParse.stream().collect(groupingBy(Ad::getAddress));
     }
 
     public Map<Address, List<Ad>> getResults(String city) {
