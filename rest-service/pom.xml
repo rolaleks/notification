@@ -9,9 +9,8 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>database-service</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
-    <name>database-service</name>
+    <artifactId>rest-service</artifactId>
+    <name>rest-service</name>
     <description>Demo project for Spring Boot</description>
 
     <dependencies>
