@@ -22,10 +22,10 @@ public class RegistrationUser {
     private String name;
 
     @NotNull(message = "is required")
-    @Size(min = 4, message = "password is too short")
+    @Size(min = 1, message = "password is too short")
     private String password;
 
     @NotNull(message = "is required")
-    @Size(min = 4, message = "password is too short")
+    @Size(min = 1, message = "password is too short")
     private String matchingPassword;
 }

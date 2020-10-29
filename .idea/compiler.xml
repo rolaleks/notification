@@ -7,20 +7,25 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="database-service" />
-        <module name="cleaner-service" />
         <module name="notification-service" />
-        <module name="ui-service" />
         <module name="parser-service" />
+        <module name="rest-service" />
+        <module name="ui-service" />
+        <module name="database" />
+        <module name="cleaner-service" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="database-service" target="1.8" />
+    </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="cleaner-service" options="-parameters" />
-      <module name="database-service" options="-parameters" />
+      <module name="database" options="-parameters" />
       <module name="notification-service" options="-parameters" />
       <module name="parser-service" options="-parameters" />
+      <module name="rest-service" options="-parameters" />
       <module name="ui-service" options="-parameters" />
     </option>
   </component>

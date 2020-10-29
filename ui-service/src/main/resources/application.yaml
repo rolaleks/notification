@@ -2,15 +2,21 @@ server:
   port: 8080
   servlet:
     context-path:
-spring:
 
-#  thymeleaf:
+
+  #  thymeleaf:
 #    encoding: UTF-8
 #    prefix: file:ui-service/src/main/resources/templates/
 #    cache: false
 #  resources:
 #    static-locations: file:ui-service/src/main/resources/static/
 
-  jackson:
-    serialization:
-      indent_output: true
+
+
+jwt:
+  header: Authorization
+  secret: proselyte
+  expiration: 604800
+
+db:
+  url: "http://localhost:8079"

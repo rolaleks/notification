@@ -1,14 +1,24 @@
 package ru.geekbrains.ui.service.controller;
 
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
+import org.springframework.http.*;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestTemplate;
+import ru.geekbrains.ui.service.bean.Token;
+import ru.geekbrains.ui.service.dto.JwtResponseToken;
 import ru.geekbrains.ui.service.validation.AuthUser;
 import ru.geekbrains.ui.service.validation.RegistrationUser;
 
@@ -16,19 +26,23 @@ import ru.geekbrains.ui.service.validation.RegistrationUser;
 @Controller
 @RequestMapping("auth")
 @Slf4j
+@RequiredArgsConstructor
 public class AuthController {
 
     @InitBinder
-    public void initBinder(WebDataBinder webDataBinderAuth ) {
+    public void initBinder(WebDataBinder webDataBinderAuth) {
         StringTrimmerEditor stringTrimmerEditor = new StringTrimmerEditor(true);
         webDataBinderAuth.registerCustomEditor(String.class, stringTrimmerEditor); // set message error
     }
 
-    @GetMapping
-    public String authPage(Model model) {
-        model.addAttribute("authUser", new AuthUser());
-        return "auth/auth-form";
-    }
+    @Value("${db.url}")
+    private String urlDb;
+
+    private final Token token;
+    private final RestTemplate restTemplate;
+    private final AuthenticationManager authenticationManager;
+    private final ObjectMapper objectMapper;
+
 
     @GetMapping("/register")
     public String registerPage(Model model) {
@@ -40,33 +54,63 @@ public class AuthController {
     public String processRegistrationForm(
             @ModelAttribute("registrationUser") @Validated RegistrationUser registrationUser,
             BindingResult bindingResult,
-            Model model) {
+            Model model) throws JsonProcessingException {
 
 
         if (bindingResult.hasErrors()) {
             return "auth/registration-form";
         }
-
-        //запрос в дб
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<String> request = new HttpEntity<>(objectMapper.writeValueAsString(registrationUser), headers);
+        ResponseEntity<String> responseEntity = restTemplate
+                .exchange(urlDb + "/auth/register", HttpMethod.POST, request, String.class);
         log.info("Save user " + registrationUser.getLogin());
-        model.addAttribute("userEmail", registrationUser.getLogin());
-        return "redirect:auth";
+        return "redirect:/auth";
+    }
+
+
+    @GetMapping
+    public String authPage(Model model) {
+        model.addAttribute("authUser", new AuthUser());
+        model.addAttribute("info", "ведите логин пароль");
+        return "auth/auth-form";
     }
 
     @PostMapping("/process")
     public String processAuthForm(
             @ModelAttribute("authUser") @Validated AuthUser authUser,
             BindingResult bindingResult,
-            Model model) {
+            Model model
 
+    ) throws JsonProcessingException {
         if (bindingResult.hasErrors()) {
             return "auth/auth-form";
         }
 
-        //запрос в дб
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<String> request = new HttpEntity<>(objectMapper.writeValueAsString(authUser), headers);
+        ResponseEntity<String> responseEntity = restTemplate
+                .exchange(urlDb + "/auth/login", HttpMethod.POST, request, String.class);
 
-        log.info("login user " + authUser.getLogin());
-        model.addAttribute("userEmail", authUser.getLogin());
+        JwtResponseToken jwtResponseToken = objectMapper.readValue(responseEntity.getBody(), JwtResponseToken.class);
+        token.setToken(jwtResponseToken.getToken());
+        log.info("set token");
+        return "redirect:/home";
+    }
+
+    @GetMapping("/logout")
+    public String logout() {
+        token.setToken(null);
+        return "redirect:/auth";
+    }
+
+    @ExceptionHandler
+    public String handleException(HttpClientErrorException exc, Model model) {
+        model.addAttribute("authUser", new AuthUser());
+        model.addAttribute("info", "неверный логин или пароль");
         return "auth/auth-form";
     }
+
 }
