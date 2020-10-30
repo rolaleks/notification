@@ -8,6 +8,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import ru.geekbrains.entity.Ad;
@@ -83,7 +84,8 @@ public class CianParser {
                     .addParameter("offer_type", "flat")
                     .addParameter("region", regionCode)
                     .addParameter("p", pageValue);
-            WebDriver driver = new ChromeDriver();
+
+            WebDriver driver = new HtmlUnitDriver();
             driver.get(uri.toString());
 
             document = Jsoup.parse(driver.getPageSource());
@@ -118,7 +120,7 @@ public class CianParser {
 
     public Map<Address, List<Ad>> getResults(String city) {
 
-        return new HashMap<Address, List<Ad>>();
+        return addressAdMap;
     }
 }
 
