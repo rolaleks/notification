@@ -28,9 +28,9 @@ public class RequestHandlerService {
     public boolean isBlank(Task task){
         return task.getTaskId() == null ||
                 task.getCity() == null ||
-                task.getCounty() == null ||
+                task.getCountry() == null ||
                 task.getTaskId().equals("") ||
-                task.getCounty().equals("") ||
+                task.getCountry().equals("") ||
                 task.getCity().equals("");
     }
 }

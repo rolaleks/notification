@@ -13,7 +13,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+import ru.geekbrains.model.Parser;
 import ru.geekbrains.model.Task;
+import ru.geekbrains.parser.ApartmentParserInterface;
+import ru.geekbrains.service.geo.GeoService;
+import ru.geekbrains.service.parserservice.ParserService;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -24,11 +28,16 @@ import java.util.regex.Pattern;
 
 @Service
 @Log
-public class AvitoParser {
+public class AvitoParser extends Parser implements Runnable {
 
 
-    @Autowired
     private AvitoClient client;
+
+    private ParserService parserService;
+
+    private GeoService geoService;
+
+    private Task task;
 
     @Value("${parsers.avito.listLinkSelector:.snippet-list .snippet.item_table .snippet-title .snippet-link}")
     private String listLinkSelector;
@@ -45,16 +54,51 @@ public class AvitoParser {
     @Value("${parsers.avito.apartmentSelectors.addressSelector:.item-address__string}")
     private String addressSelector;
 
-    @Value("${parsers.avito.maxPage:5}")
+    @Value("${parsers.avito.apartmentSelectors.districtSelector:.item-address-georeferences-item__content}")
+    private String districtSelector;
+
+    @Value("${parsers.avito.maxPage:1}")
     private int maxPage;
 
-    public List<AvitoApartment> parse(Task task) {
+    @Autowired
+    public AvitoParser(AvitoClient client, ParserService parserService, GeoService geoService) {
+        this.client = client;
+        this.parserService = parserService;
+        this.geoService = geoService;
+
+        this.parserService.register(this);
+    }
+
+    public void start(String country, String city) {
+        this.setProcessing(true);
+
+        this.task = new Task();
+        task.setCountry(country);
+        task.setCity(city);
+
+        new Thread(this).start();
+    }
+
+    public void run() {
+
+        List<ApartmentParserInterface> avitoApartments = this.parse(this.task);
+        this.setApartmentList(avitoApartments);
+        log.info(String.valueOf(avitoApartments.size()));
+        this.setProcessing(false);
+    }
+
+    public String getName() {
+
+        return "avito";
+    }
+
+    public List<ApartmentParserInterface> parse(Task task) {
 
         try {
             Integer cityId = this.findCityId(task.getCity());
             String prefix = this.findCityPrefix(cityId);
 
-            ArrayList<AvitoApartment> avitoApartments = new ArrayList<>();
+            ArrayList<ApartmentParserInterface> avitoApartments = new ArrayList<>();
             ArrayList<String> allLinks = new ArrayList<>();
 
             for (int page = 1; page <= this.maxPage; page++) {
@@ -145,7 +189,9 @@ public class AvitoParser {
     private AvitoApartment parseApartment(String url) {
 
         AvitoApartment avitoApartment = new AvitoApartment();
-        avitoApartment.setCity(url);
+        avitoApartment.setUrl(url);
+        avitoApartment.setCountry(this.task.getCountry());
+        avitoApartment.setCity(this.task.getCity());
 
         String page = this.client.apartmentPage(url);
         Document doc = Jsoup.parse(page, this.client.getBaseUrl());
@@ -154,6 +200,7 @@ public class AvitoParser {
         avitoApartment.setInfoDescription(this.parseStringValue(this.infoDescriptionSelector, doc));
         avitoApartment.setDescription(this.parseStringValue(this.descriptionSelector, doc));
         avitoApartment.setAddress(this.parseStringValue(this.addressSelector, doc));
+        avitoApartment.setDistrict(this.parseStringValue(this.districtSelector, doc));
 
         Element price = doc.selectFirst(this.priceSelector);
         if (price != null) {

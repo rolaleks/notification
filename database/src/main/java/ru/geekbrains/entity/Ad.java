@@ -3,6 +3,8 @@ package ru.geekbrains.entity;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -51,9 +53,11 @@ public class Ad {
     @Column(name = "is_active")
     Boolean isActive;
 
+    @CreationTimestamp
     @Column(name = "created_at")
     OffsetDateTime createdAt;
 
+    @UpdateTimestamp
     @Column(name = "updated_at")
     OffsetDateTime updatedAt;
 

@@ -1,14 +1,14 @@
 package ru.geekbrains.parser.avito;
 
+import ru.geekbrains.parser.ApartmentParserInterface;
+
 import java.math.BigDecimal;
 
-public class AvitoApartment {
+public class AvitoApartment implements ApartmentParserInterface {
 
     private Integer id;
 
     private String url;
-
-    private String title;
 
     private String description;
 
@@ -43,6 +43,16 @@ public class AvitoApartment {
     //Студия/1/2/3/4 итд
     private String rooms;
 
+    private String country;
+
+    private String region;
+
+    private String district;
+
+    private String street;
+
+    private String house;
+
 
     public String getUrl() {
         return url;
@@ -53,11 +63,7 @@ public class AvitoApartment {
     }
 
     public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
+        return infoDescription;
     }
 
     public String getDescription() {
@@ -105,6 +111,15 @@ public class AvitoApartment {
     }
 
     public void setAddress(String address) {
+        if (address == null) {
+            this.address = address;
+            return;
+        }
+        String[] addressParts = address.split(",", 3);
+        if (addressParts.length > 1) {
+            this.setStreet(addressParts[0]);
+            this.setHouse(addressParts[1]);
+        }
         this.address = address;
     }
 
@@ -141,7 +156,7 @@ public class AvitoApartment {
         this.areaLive = areaLive;
     }
 
-    public int getFloor() {
+    public Integer getFloor() {
         return floor;
     }
 
@@ -149,8 +164,8 @@ public class AvitoApartment {
         this.floor = floor;
     }
 
-    public int getFloorsCount() {
-        return floorsCount;
+    public Short getFloorsCount() {
+        return (short) floorsCount;
     }
 
     public void setFloorsCount(int floorsCount) {
@@ -181,8 +196,74 @@ public class AvitoApartment {
         this.rooms = rooms;
     }
 
-    public boolean isEmpty(){
+    public boolean isEmpty() {
 
         return this.id == null || this.infoDescription.isEmpty() || this.price == null;
     }
+
+    @Override
+    public Float getAreaLiving() {
+        return areaLive;
+    }
+
+    @Override
+    public String getLink() {
+        return url;
+    }
+
+    @Override
+    public String getCountry() {
+        return country;
+    }
+
+    @Override
+    public String getRegion() {
+        return region;
+    }
+
+    @Override
+    public String getDistrict() {
+        return district;
+    }
+
+    @Override
+    public String getStreet() {
+        return street;
+    }
+
+    @Override
+    public String getHouse() {
+        return house;
+    }
+
+    public void setCountry(String country) {
+        this.country = country;
+    }
+
+    public void setRegion(String region) {
+        this.region = region;
+    }
+
+    public void setDistrict(String district) {
+
+        if (district == null) {
+            this.district = district;
+        } else {
+            district = district.replaceFirst("р-н", "");
+            this.district = district.trim();
+        }
+    }
+
+    public void setStreet(String street) {
+        street = street.replaceFirst("ул.", "");
+        this.street = street.trim();
+    }
+
+    public void setHouse(String house) {
+        house = house.replaceFirst("д.", "");
+        house = house.replaceFirst("стр.", "");
+        this.house = house.trim();
+    }
+
+
 }
