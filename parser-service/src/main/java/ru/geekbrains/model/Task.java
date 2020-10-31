@@ -12,7 +12,7 @@ import java.util.Objects;
 public class Task {
     String taskId;
     String city;
-    String county;
+    String country;
 
     @Override
     public boolean equals(Object o) {
@@ -20,11 +20,11 @@ public class Task {
         if (o == null || getClass() != o.getClass()) return false;
         Task task = (Task) o;
         return city.equals(task.city) &&
-                county.equals(task.county);
+                country.equals(task.country);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(city, county);
+        return Objects.hash(city, country);
     }
 }
