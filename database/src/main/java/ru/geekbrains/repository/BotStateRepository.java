@@ -8,5 +8,5 @@ import java.util.Optional;
 
 @Repository
 public interface BotStateRepository extends JpaRepository<BotStateData, Long> {
-    Optional<BotStateData> findByChatId(String id);
+    Optional<BotStateData> findByChatId(long id);
 }

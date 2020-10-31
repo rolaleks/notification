@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
 import ru.geekbrains.notification.telegram.TelegramBotContext;
-import sun.rmi.runtime.Log;
 
 @Slf4j
 public enum  BotState {
@@ -30,7 +29,8 @@ public enum  BotState {
         @Override
         public void handleInput(TelegramBotContext context) {
             //проверяем логин и связываем id c учетной записью
-            if(context.getInput().contains("next")){
+            log.info("### user input - " + context.getInput());
+            if(context.getInput().toUpperCase().contains("NEXT")){
                 next = QUESTION_1;
             } else {
                 next = CHECK_AUTH;
@@ -53,7 +53,7 @@ public enum  BotState {
         @Override
         public void handleInput(TelegramBotContext context) {
             //проверка на валидность
-            if(context.getInput().contains("next")){
+            if(context.getInput().toUpperCase().contains("NEXT")){
                 next = QUESTION_2;
             } else {
                 next = QUESTION_1;
@@ -76,8 +76,8 @@ public enum  BotState {
         @Override
         public void handleInput(TelegramBotContext context) {
             //проверка на валидность
-            if(context.getInput().contains("next")){
-                next = START;
+            if(context.getInput().toUpperCase().contains("NEXT")){
+                next = QUESTION_3;
             } else {
                 next = QUESTION_2;
             }
@@ -99,8 +99,8 @@ public enum  BotState {
         @Override
         public void handleInput(TelegramBotContext context) {
             //проверка на валидность
-            if(context.getInput().contains("next")){
-                next = QUESTION_3;
+            if(context.getInput().toUpperCase().contains("NEXT")){
+                next = START;
             } else {
                 next = QUESTION_3;
             }

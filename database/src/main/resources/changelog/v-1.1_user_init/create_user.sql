@@ -53,13 +53,22 @@ values ('ADMIN'),
 
 GO
 
-create table users_roles (
-                             user_id               int8 NOT NULL,
-                             role_id               int8 NOT NULL,
-                             primary key (user_id, role_id),
-                             FOREIGN KEY (user_id)  REFERENCES client.users (id),
-                             FOREIGN KEY (role_id)  REFERENCES client.roles (id)
-)
+insert into client.users (id, login, name, password, status, surname)
+values ('1', 'test', 'test', 'test', 'ACTIVE', 'test')
+
+GO
+
+insert into client.users_roles (user_id, role_id)
+values ('1', '2')
+-- GO
+
+-- create table users_roles (
+--                              user_id               int8 NOT NULL,
+--                              role_id               int8 NOT NULL,
+--                              primary key (user_id, role_id),
+--                              FOREIGN KEY (user_id)  REFERENCES client.users (id),
+--                              FOREIGN KEY (role_id)  REFERENCES client.roles (id)
+-- )
 
 
 -- GO

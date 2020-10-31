@@ -9,8 +9,8 @@ import org.telegram.telegrambots.api.objects.Update;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
 import org.telegram.telegrambots.exceptions.TelegramApiRequestException;
+import ru.geekbrains.entity.BotStateData;
 import ru.geekbrains.notification.model.User;
-import ru.geekbrains.notification.model.BotStateData;
 import ru.geekbrains.notification.service.BotState;
 import ru.geekbrains.notification.service.Notification;
 import ru.geekbrains.notification.service.BotStateService;
@@ -54,7 +54,7 @@ public class TelegramBot extends TelegramLongPollingBot implements Notification 
         final String message = update.getMessage().getText();
         final long chatId = update.getMessage().getChatId();
 
-        BotStateData user = botStateService.findUserByChatId(chatId); //если пользователь с нами общался null, если нет возвращаем
+        BotStateData user = botStateService.findStateByChatId(chatId); //если пользователь с нами общался null, если нет возвращаем
 
         TelegramBotContext context;
         BotState state;
@@ -63,8 +63,9 @@ public class TelegramBot extends TelegramLongPollingBot implements Notification 
             log.info("Создаем нового пользователя");
             state = BotState.getInstance();
             //создаем пользователя и задаем ему состояние
+
             user = new BotStateData(chatId, state.ordinal());
-            botStateService.save(user);
+            botStateService.saveState(user);
 
             context = TelegramBotContext.of(this, user, message);
             state.enter(context);
@@ -82,7 +83,7 @@ public class TelegramBot extends TelegramLongPollingBot implements Notification 
         } while (!state.isInputNeeded());
 
         user.setState(state.ordinal());
-        botStateService.save(user);
+        botStateService.saveState(user);
     }
 
     @Override

@@ -2,7 +2,7 @@ package ru.geekbrains.notification.telegram;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import ru.geekbrains.notification.model.BotStateData;
+import ru.geekbrains.entity.BotStateData;
 
 @Data
 @AllArgsConstructor
