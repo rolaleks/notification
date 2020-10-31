@@ -12,7 +12,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class MessageHandlerService {
+public class RequestService {
 
     public List<Notification> notificationList = new ArrayList<>();
 

@@ -1,4 +1,4 @@
-package ru.geekbrains.model;
+package ru.geekbrains.notification.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
