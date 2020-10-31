@@ -15,7 +15,7 @@ public class RequestHandlerService {
 
     private final TaskService taskService;
 
-    public ResponseEntity<Object> addTask (Task task) throws Exception {
+    public ResponseEntity<ResponseMessage> addTask (Task task) throws Exception {
         if(isBlank(task)) {
             throw new VariableBlankException("В объекте пустые поля");
         }

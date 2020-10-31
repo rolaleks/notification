@@ -1,0 +1,32 @@
+server:
+  port: ${PORT:8060}
+  servlet:
+    context-path: /
+spring:
+  liquibase:
+    enabled: true
+    change-log: classpath:changelog/db.changelog-master.xml
+
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/notification}
+    username: ${SPRING_DATASOURCE_USERNAME:postgres}
+    password: ${SPRING_DATASOURCE_PASSWORD:root}
+
+  jpa:
+    generate-ddl: false
+    show-sql: true
+    properties:
+      hibernate:
+#        format_sql:true
+        ddl-auto: none
+        dialect: org.hibernate.dialect.PostgreSQL95Dialect
+        temp:
+          use_jdbc_metadata_defaults: false
+    hibernate:
+      ddl-auto: validate
+
+  jackson:
+    serialization:
+      indent_output: true
+

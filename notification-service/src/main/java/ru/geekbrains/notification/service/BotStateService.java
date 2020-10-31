@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.geekbrains.entity.BotStateData;
+import ru.geekbrains.entity.bot.BotData;
 import ru.geekbrains.repository.BotStateRepository;
 import ru.geekbrains.repository.UserRepository;
 
@@ -23,18 +23,18 @@ public class BotStateService {
     }
 
     @Transactional
-    public void saveState(@NotNull BotStateData botStateData) {
-        if(botStateData.getUser() == null){
-            botStateData.setUser(userRepository.findByLogin("test").get());
+    public void saveState(@NotNull BotData botData) {
+        if(botData.getUser() == null){
+            botData.setUser(userRepository.findByLogin("test").get());
         }
-        log.info(String.format("save bot state with chatID = {%s}", botStateData.getChatId()));
+        log.info(String.format("save bot state with chatID = {%s}", botData.getChatId()));
 //        if(!isConstrainsChatId(botStateData.getChatId())) {
-            botStateRepository.save(botStateData);
+            botStateRepository.save(botData);
 //        }
     }
 
     @Transactional(readOnly = true)
-    public BotStateData findStateByChatId(long chatId) {
+    public BotData findStateByChatId(long chatId) {
         log.info(String.format("find bot state with chatID = {%s}", chatId));
         return botStateRepository.findByChatId(chatId).orElse(null);
     }

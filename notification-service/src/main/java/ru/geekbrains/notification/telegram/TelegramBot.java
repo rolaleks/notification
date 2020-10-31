@@ -9,12 +9,15 @@ import org.telegram.telegrambots.api.objects.Update;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
 import org.telegram.telegrambots.exceptions.TelegramApiRequestException;
-import ru.geekbrains.entity.BotStateData;
+import ru.geekbrains.entity.bot.Answer;
+import ru.geekbrains.entity.bot.BotData;
 import ru.geekbrains.notification.model.User;
 import ru.geekbrains.notification.service.BotState;
 import ru.geekbrains.notification.service.Notification;
 import ru.geekbrains.notification.service.BotStateService;
+import ru.geekbrains.notification.service.TaskService;
 
+import java.util.Date;
 import java.util.List;
 
 @Component
@@ -24,11 +27,13 @@ public class TelegramBot extends TelegramLongPollingBot implements Notification 
     private String username = "real_estate_notifier_bot";
     private String token = "1331299206:AAHQpxDPwtp90pkP38E211HGcpUvFL7Ncvw";
     private BotStateService botStateService;
+    private final TaskService taskService;
 
     @Autowired
-    public TelegramBot(TelegramBotsApi telegramBotsApi, BotStateService botStateService) throws TelegramApiRequestException {
+    public TelegramBot(TelegramBotsApi telegramBotsApi, BotStateService botStateService, TaskService taskService) throws TelegramApiRequestException {
         telegramBotsApi.registerBot(this);
         this.botStateService = botStateService;
+        this.taskService = taskService;
     }
 
 
@@ -54,7 +59,7 @@ public class TelegramBot extends TelegramLongPollingBot implements Notification 
         final String message = update.getMessage().getText();
         final long chatId = update.getMessage().getChatId();
 
-        BotStateData user = botStateService.findStateByChatId(chatId); //если пользователь с нами общался null, если нет возвращаем
+        BotData user = botStateService.findStateByChatId(chatId); //если пользователь с нами общался null, если нет возвращаем
 
         TelegramBotContext context;
         BotState state;
@@ -64,13 +69,13 @@ public class TelegramBot extends TelegramLongPollingBot implements Notification 
             state = BotState.getInstance();
             //создаем пользователя и задаем ему состояние
 
-            user = new BotStateData(chatId, state.ordinal());
+            user = new BotData(new Answer(), chatId, state.ordinal());
             botStateService.saveState(user);
 
-            context = TelegramBotContext.of(this, user, message);
+            context = TelegramBotContext.of(this, user, message, taskService);
             state.enter(context);
         } else {
-            context = TelegramBotContext.of(this, user, message);
+            context = TelegramBotContext.of(this, user, message, taskService);
             state = BotState.byID(user.getState());
             log.info("Пользователь существует");
         }

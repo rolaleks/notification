@@ -8,16 +8,16 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import ru.geekbrains.notification.model.User;
-import ru.geekbrains.notification.service.MessageHandlerService;
+import ru.geekbrains.notification.service.RequestService;
 
 import java.util.List;
 
 @RestController("/")
 @RequiredArgsConstructor
 @Slf4j
-public class RequestHandler {
+public class RequestController {
 
-    private final MessageHandlerService requestHandlerService;
+    private final RequestService requestHandlerService;
 
     @PostMapping()
     public ResponseEntity<Object> sendMessage(@RequestBody @NonNull User personalData,
