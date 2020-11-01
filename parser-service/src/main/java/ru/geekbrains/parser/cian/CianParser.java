@@ -10,6 +10,12 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import ru.geekbrains.entity.Ad;
+import ru.geekbrains.entity.Address;
+import ru.geekbrains.model.Parser;
+import ru.geekbrains.parser.ApartmentParserInterface;
+import ru.geekbrains.parser.cian.utils.AdsNotFoundException;
+import ru.geekbrains.parser.cian.utils.CaptchaException;
 import ru.geekbrains.parser.cian.utils.CianRegionDefiner;
 import ru.geekbrains.parser.cian.utils.DataExtractor;
 
@@ -42,12 +48,13 @@ import static java.util.stream.Collectors.groupingBy;
 
 @Slf4j
 @Component
-public class CianParser {
+public class CianParser extends Parser {
 
     private final DataExtractor dataExtractor;
     private final CianRegionDefiner cianRegionDefiner;
-    private Map<Address, List<Ad>> addressAdMap;
+    private final List<ApartmentParserInterface> cianApartments = new ArrayList<>();
     private boolean isProcessing = false;
+    private final String name = "Циан";
 
     @Autowired
     public CianParser(DataExtractor dataExtractor, CianRegionDefiner cianRegionDefiner) {
@@ -64,16 +71,15 @@ public class CianParser {
     public void start(String country, String city) {
         isProcessing = true;
         if (!country.equals("Россия")) {
-            throw new RuntimeException("You are searching adTags in the country " + country + " but we can find ads only in Russia");
+            throw new RuntimeException("You are searching adTags in the country " + country + " but we can find ads only in 'Россия'");
         }
 
         List<String> regionCodes = cianRegionDefiner.getRegions(city);
         String pageValue = "1";
         boolean hasNextPage = true;
-        List<Ad> adsFromParse = new ArrayList<>();
         for (String regionCode : regionCodes) {
-            while (!pageValue.equals("3")) { // uncomment to limit search deep to 2 pages. Needed to prevent blocking by IP
-//        while (hasNextPage) {  // uncomment to search throughout all the target pages
+//            while (!pageValue.equals("3")) { // uncomment to limit search deep to 2 pages. Needed to prevent blocking by IP
+            while (hasNextPage) {  // uncomment to search throughout all the target pages
 
                 URIBuilder uri = new URIBuilder();
                 uri.setScheme("https")
@@ -87,26 +93,19 @@ public class CianParser {
 
                 WebDriver driver = new HtmlUnitDriver();
                 driver.get(uri.toString());
-
                 Document document = Jsoup.parse(driver.getPageSource());
 
-                Elements adsTags = (document.getElementsByTag("article").size() > 0) ? document.getElementsByTag("article") : document.getElementsByClass("div[class~=\\S*--card--\\S*]");
+                Elements adTags = document.getElementsByTag("article");
+                if (document.title().contains("Captcha"))
+                    throw new CaptchaException("Your IP address has been blocked");
+                if (adTags.size() == 0)
+                    throw new AdsNotFoundException("There are no ads can be parsed from the page. May be Cian had changed html structure");
 
-                System.out.println(adsTags.size());
+                log.info("Amount of tags on the page: " + adTags.size());
 
-                for (Element adTag : adsTags) {
-                    Ad newAd = new Ad();
-                    newAd.setAddress(dataExtractor.getAddress(adTag));
-                    if(!newAd.getAddress().getCity().getName().equals(city)) continue;
-                    newAd.setQuantity(dataExtractor.getQuantity(adTag));
-                    newAd.setQuadrature(dataExtractor.getQuadrature(adTag));
-                    newAd.setPeriod(dataExtractor.getPeriod(adTag));
-                    newAd.setPrice(dataExtractor.getPrice(adTag));
-                    newAd.setDescription(dataExtractor.getDescription(adTag));
-                    newAd.setTitle(dataExtractor.getTitle(adTag));
-                    newAd.setLink(dataExtractor.getLink(adTag));
-                    adsFromParse.add(newAd);
-
+                for (Element adTag : adTags) {
+                    CianApartment cianApartment = dataExtractor.buildApartment(adTag);
+                    if (cianApartment.getCity().equals(city)) cianApartments.add(cianApartment);
                 }
                 String pageValueMark = document.selectFirst("div[data-name~=^Pagination]").getElementsByTag("li").last().children().first().text();
                 if (!pageValueMark.equals("..")) {
@@ -116,23 +115,23 @@ public class CianParser {
                 pageValue = String.valueOf(Integer.parseInt(pageValue) + 1);
 
             }
-
         }
-        addressAdMap = adsFromParse.stream().collect(groupingBy(Ad::getAddress));
         isProcessing = false;
     }
 
-    public Map<Address, List<Ad>> getResults(String city) {
 
-        return addressAdMap;
+    public List<ApartmentParserInterface> getResult(String city) {
+
+        return cianApartments;
     }
 
     public boolean getProcessingStatus() {
         return isProcessing;
     }
 
-    public void setProcessing(boolean processing) {
-        isProcessing = processing;
+    @Override
+    public String getName() {
+        return name;
     }
 }
 

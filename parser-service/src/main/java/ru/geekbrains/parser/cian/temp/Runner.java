@@ -17,6 +17,6 @@ public class Runner implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        cianParser.start("Россия", "Севастополь");
+        cianParser.start("Россия", "Псков");
     }
 }

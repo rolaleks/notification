@@ -1,13 +1,14 @@
 package ru.geekbrains.parser.cian.utils;
 
+import lombok.extern.slf4j.Slf4j;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.stereotype.Component;
 import ru.geekbrains.entity.*;
+import ru.geekbrains.parser.cian.CianApartment;
 import ru.geekbrains.parser.cian.utils.exception.PeriodNotFoundException;
 import ru.geekbrains.parser.cian.utils.exception.PriceNotFoundException;
 import ru.geekbrains.parser.cian.utils.exception.SquareInfoNotFoundException;
-import ru.geekbrains.utils.*;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
@@ -15,12 +16,76 @@ import java.util.StringJoiner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+@Slf4j
 @Component
 public class DataExtractorImpl implements DataExtractor {
+    private class CianAddress {
+        String country;
+        String region;
+        String city;
+        String district;
+        String street;
 
+        public CianAddress(String country, String region, String city, String district, String street) {
+            this.country = country;
+            this.region = region;
+            this.city = city;
+            this.district = district;
+            this.street = street;
+        }
+
+        public String getCountry() {
+            return country;
+        }
+
+        public String getRegion() {
+            return region;
+        }
+
+        public String getCity() {
+            return city;
+        }
+
+        public String getDistrict() {
+            return district;
+        }
+
+        public String getStreet() {
+            return street;
+        }
+
+        @Override
+        public String toString() {
+            return country + ", " +
+                    region + ", " +
+                    city + ", " +
+                    district + ", " +
+                    street;
+        }
+    }
 
     @Override
-    public Address getAddress(Element adTag) {
+    public CianApartment buildApartment(Element adTag) {
+        CianApartment cianApartment = new CianApartment();
+        CianAddress cianAddress = getAddress(adTag);
+        cianApartment.setCountry(cianAddress.getCountry());
+        cianApartment.setRegion(cianAddress.getRegion());
+        cianApartment.setCity(cianAddress.getCity());
+        cianApartment.setDistrict(cianAddress.getDistrict());
+        cianApartment.setStreet(cianAddress.getStreet());
+        cianApartment.setAddress(cianAddress.toString());
+        cianApartment.setRooms(this.getQuantity(adTag));
+        cianApartment.setArea(this.getQuadrature(adTag));
+        cianApartment.setPrice(this.getPrice(adTag));
+        cianApartment.setDescription(this.getDescription(adTag));
+        cianApartment.setInfoDescription(this.getTitle(adTag));
+        cianApartment.setUrl(this.getLink(adTag));
+
+        return cianApartment;
+    }
+
+
+    private CianAddress getAddress(Element adTag) {
         Elements addressElements = adTag.select("a[data-name$=GeoLabel]");
         //Регион и город обозначаются одинаково: region
         String[] regionAndCity = addressElements.stream().filter(element -> element.attr("href").contains("region")).map(Element::text).toArray(String[]::new);
@@ -33,31 +98,10 @@ public class DataExtractorImpl implements DataExtractor {
         String districtFromAd = stringJoiner.toString();
         String streetFromAd = addressElements.stream().filter(element -> element.attr("href").contains("street")).map(Element::text).findFirst().orElse("улица не указана");
 
-        System.out.print(regionFromAd + ", " + cityFromAd + ", ");
-        System.out.print(districtFromAd + ", ");
-        System.out.println(streetFromAd);
-
-        Country country = new Country();
-        country.setName("Россия");
-        Region region = new Region();
-        region.setName(regionFromAd);
-        City city = new City();
-        city.setName(cityFromAd);
-        District district = new District();
-        district.setName(districtFromAd);
-        Street street = new Street();
-        street.setName(streetFromAd);
-        Address address = new Address();
-        address.setCity(city);
-        address.setCountry(country);
-        address.setDistrict(district);
-        address.setRegion(region);
-        address.setStreet(street);
-        return address;
+        return new CianAddress("Россия", regionFromAd, cityFromAd, districtFromAd, streetFromAd);
     }
 
-    @Override
-    public Byte getQuantity(Element adTag) {
+    private String getQuantity(Element adTag) {
 
         Element adTitle = adTag.select("span[data-mark$=OfferTitle]").first();
         Element adSubtitle = adTag.select("span[data-mark$=OfferSubtitle]").first();
@@ -76,13 +120,11 @@ public class DataExtractorImpl implements DataExtractor {
         } else {
             roomsAmount = "0";
         }
-        System.out.print("Количество комнат: " + roomsAmount + " ");
 
-        return Byte.parseByte(roomsAmount);
+        return roomsAmount;
     }
 
-    @Override
-    public Short getQuadrature(Element adTag) {
+    private Float getQuadrature(Element adTag) {
 
         Element adTitle = adTag.select("span[data-mark$=OfferTitle]").first();
         Element adSubtitle = adTag.select("span[data-mark$=OfferSubtitle]").first();
@@ -101,14 +143,12 @@ public class DataExtractorImpl implements DataExtractor {
         } else {
             throw new SquareInfoNotFoundException("Apartment's square hasn't been found on the cian.ru page");
         }
-        System.out.print("Площадь: " + square + " ");
-        String squareWithoutMetersAndRounded = String.valueOf(Math.round(Float.parseFloat(square.replaceAll("\\sм²", "").replaceAll(",",""))));
-        return Short.parseShort(squareWithoutMetersAndRounded);
+        String squareWithoutMetersAndRounded = String.valueOf(Math.round(Float.parseFloat(square.replaceAll("\\sм²", "").replaceAll(",", ""))));
+        return Float.parseFloat(squareWithoutMetersAndRounded);
 
     }
 
-    @Override
-    public String getPeriod(Element adTag) {
+    private String getPeriod(Element adTag) {
         Element adPriceContent = adTag.select("span[data-mark$=MainPrice]").first();
         Pattern periodPattern = Pattern.compile("[ЁёА-я]{3,5}", Pattern.UNICODE_CHARACTER_CLASS);
         Matcher matcherPeriod = periodPattern.matcher(adPriceContent.text());
@@ -118,12 +158,10 @@ public class DataExtractorImpl implements DataExtractor {
         } else {
             throw new PeriodNotFoundException("Period hasn't been found on the cian.ru page");
         }
-        System.out.println(period);
         return period;
     }
 
-    @Override
-    public BigDecimal getPrice(Element adTag) {
+    private BigDecimal getPrice(Element adTag) {
         Element adPriceContent = adTag.select("span[data-mark$=MainPrice]").first();
 
         Pattern pricePattern = Pattern.compile("^[\\d\\s]+\\s₽");
@@ -134,34 +172,27 @@ public class DataExtractorImpl implements DataExtractor {
         } else {
             throw new PriceNotFoundException("Price hasn't been found on the cian.ru page");
         }
-        System.out.print(price + " в ");
         return price;
     }
 
-    @Override
-    public String getTitle(Element adTag) {
+    private String getTitle(Element adTag) {
 
         Element adTitle = adTag.select("span[data-mark$=OfferTitle]").first();
         Element adSubtitle = adTag.select("span[data-mark$=OfferSubtitle]").first();
 
         String title = adTitle.text() + " " + (adSubtitle != null ? adSubtitle.text() : "");
-        System.out.println(title);
         return title;
     }
 
-    @Override
-    public String getDescription(Element adTag) {
+    private String getDescription(Element adTag) {
         Element adDescription = adTag.select("div[class~=\\S*description\\S*]").first();
         String description = adDescription.text();
-        System.out.println(description);
         return description;
     }
 
-    @Override
-    public String getLink(Element adTag) {
+    private String getLink(Element adTag) {
         Element adLinkTag = adTag.selectFirst("div[data-name$=LinkArea]");
         String link = adLinkTag.selectFirst("a").attr("href");
-        System.out.println(link);
         return link;
     }
 }
