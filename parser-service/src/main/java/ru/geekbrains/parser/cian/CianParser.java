@@ -10,8 +10,6 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import ru.geekbrains.entity.Ad;
-import ru.geekbrains.entity.Address;
 import ru.geekbrains.parser.cian.utils.CianRegionDefiner;
 import ru.geekbrains.parser.cian.utils.DataExtractor;
 

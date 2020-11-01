@@ -4,8 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.geekbrains.entity.Ad;
-import ru.geekbrains.entity.Address;
 import ru.geekbrains.parser.ApartmentParserInterface;
 import ru.geekbrains.repository.AdRepository;
 import ru.geekbrains.repository.AddressRepository;
@@ -40,7 +38,7 @@ public class AdService {
             } else {
                 ad = new Ad();
                 ad.setLink(apartment.getLink());
-//                ad.setType(parserType);
+                ad.setType(parserType);
                 ad.setIsActive(true);
             }
 
@@ -62,11 +60,11 @@ public class AdService {
         ad.setTitle(apartment.getTitle());
         ad.setDescription(apartment.getDescription());
         ad.setPrice(apartment.getPrice());
-//        ad.setRooms(apartment.getRooms());
-//        ad.setArea(apartment.getArea());
-//        ad.setAreaKitchen(apartment.getAreaKitchen());
-//        ad.setAreaLiving(apartment.getAreaLiving());
-//        ad.setFloor(apartment.getFloor());
+        ad.setRooms(apartment.getRooms());
+        ad.setArea(apartment.getArea());
+        ad.setAreaKitchen(apartment.getAreaKitchen());
+        ad.setAreaLiving(apartment.getAreaLiving());
+        ad.setFloor(apartment.getFloor());
     }
 
     @Transactional

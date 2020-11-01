@@ -1,7 +1,6 @@
 package ru.geekbrains.parser.cian.utils;
 
 import org.jsoup.nodes.Element;
-import ru.geekbrains.entity.Address;
 
 import java.math.BigDecimal;
 
