@@ -4,6 +4,9 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.stereotype.Component;
 import ru.geekbrains.entity.*;
+import ru.geekbrains.parser.cian.utils.exception.PeriodNotFoundException;
+import ru.geekbrains.parser.cian.utils.exception.PriceNotFoundException;
+import ru.geekbrains.parser.cian.utils.exception.SquareInfoNotFoundException;
 import ru.geekbrains.utils.*;
 
 import java.math.BigDecimal;
@@ -28,10 +31,12 @@ public class DataExtractorImpl implements DataExtractor {
         StringJoiner stringJoiner = new StringJoiner(", ");
         Arrays.stream(districts).forEach(stringJoiner::add);
         String districtFromAd = stringJoiner.toString();
-        String streetFromAd = addressElements.stream().filter(element -> element.attr("href").contains("street")).map(Element::text).findFirst().orElseThrow(CianStreetNotFoundException::new);
+        String streetFromAd = addressElements.stream().filter(element -> element.attr("href").contains("street")).map(Element::text).findFirst().orElse("улица не указана");
+
         System.out.print(regionFromAd + ", " + cityFromAd + ", ");
-        System.out.print(districtFromAd);
+        System.out.print(districtFromAd + ", ");
         System.out.println(streetFromAd);
+
         Country country = new Country();
         country.setName("Россия");
         Region region = new Region();
@@ -42,7 +47,13 @@ public class DataExtractorImpl implements DataExtractor {
         district.setName(districtFromAd);
         Street street = new Street();
         street.setName(streetFromAd);
-        return new Address(-1L, country, region, city, district, street);
+        Address address = new Address();
+        address.setCity(city);
+        address.setCountry(country);
+        address.setDistrict(district);
+        address.setRegion(region);
+        address.setStreet(street);
+        return address;
     }
 
     @Override

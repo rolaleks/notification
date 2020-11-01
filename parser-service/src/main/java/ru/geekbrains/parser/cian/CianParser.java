@@ -7,12 +7,12 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import ru.geekbrains.entity.Ad;
 import ru.geekbrains.entity.Address;
+import ru.geekbrains.parser.cian.utils.CianRegionDefiner;
 import ru.geekbrains.parser.cian.utils.DataExtractor;
 
 import java.util.*;
@@ -46,15 +46,16 @@ import static java.util.stream.Collectors.groupingBy;
 @Component
 public class CianParser {
 
-    private DataExtractor dataExtractor;
+    private final DataExtractor dataExtractor;
+    private final CianRegionDefiner cianRegionDefiner;
     private Map<Address, List<Ad>> addressAdMap;
+    private boolean isProcessing = false;
 
     @Autowired
-    public void setDataExtractor(DataExtractor dataExtractor) {
+    public CianParser(DataExtractor dataExtractor, CianRegionDefiner cianRegionDefiner) {
         this.dataExtractor = dataExtractor;
+        this.cianRegionDefiner = cianRegionDefiner;
     }
-
-    private Document document;
 
     /**
      * Fills Map interface implementor with <code>Address</code> as a key and List<code></><Ad></code> as a value
@@ -63,64 +64,77 @@ public class CianParser {
      * @param city    Name of a city in which parser should find adTags
      */
     public void start(String country, String city) {
+        isProcessing = true;
         if (!country.equals("Россия")) {
-            throw new RuntimeException("You are searching adTags in the country " + country + " but we can find adTags only in Russia");
+            throw new RuntimeException("You are searching adTags in the country " + country + " but we can find ads only in Russia");
         }
 
-        String regionCode = "1"; // это заглушка (код москвы), пока нет решения как соответствовать кодам городов на Циан
+        List<String> regionCodes = cianRegionDefiner.getRegions(city);
         String pageValue = "1";
         boolean hasNextPage = true;
         List<Ad> adsFromParse = new ArrayList<>();
-
-        while (!pageValue.equals("3")) { // uncomment to limit search deep to 2 pages
+        for (String regionCode : regionCodes) {
+            while (!pageValue.equals("3")) { // uncomment to limit search deep to 2 pages. Needed to prevent blocking by IP
 //        while (hasNextPage) {  // uncomment to search throughout all the target pages
 
-            URIBuilder uri = new URIBuilder();
-            uri.setScheme("https")
-                    .setHost("www.cian.ru")
-                    .setPath("/cat.php")
-                    .addParameter("engine_version", "2")
-                    .addParameter("deal_type", "rent")
-                    .addParameter("offer_type", "flat")
-                    .addParameter("region", regionCode)
-                    .addParameter("p", pageValue);
+                URIBuilder uri = new URIBuilder();
+                uri.setScheme("https")
+                        .setHost("www.cian.ru")
+                        .setPath("/cat.php")
+                        .addParameter("engine_version", "2")
+                        .addParameter("deal_type", "rent")
+                        .addParameter("offer_type", "flat")
+                        .addParameter("region", regionCode)
+                        .addParameter("p", pageValue);
 
-            WebDriver driver = new HtmlUnitDriver();
-            driver.get(uri.toString());
+                WebDriver driver = new HtmlUnitDriver();
+                driver.get(uri.toString());
 
-            document = Jsoup.parse(driver.getPageSource());
+                Document document = Jsoup.parse(driver.getPageSource());
 
-            Elements adsTags = (document.getElementsByTag("article").size() > 0) ? document.getElementsByTag("article") : document.getElementsByClass("div[class~=\\S*--card--\\S*]");
+                Elements adsTags = (document.getElementsByTag("article").size() > 0) ? document.getElementsByTag("article") : document.getElementsByClass("div[class~=\\S*--card--\\S*]");
 
-            System.out.println(adsTags.size());
+                System.out.println(adsTags.size());
 
-            for (Element adTag : adsTags) {
-                Ad newAd = new Ad();
-                newAd.setAddress(dataExtractor.getAddress(adTag));
-                newAd.setQuantity(dataExtractor.getQuantity(adTag));
-                newAd.setQuadrature(dataExtractor.getQuadrature(adTag));
-                newAd.setPeriod(dataExtractor.getPeriod(adTag));
-                newAd.setPrice(dataExtractor.getPrice(adTag));
-                newAd.setDescription(dataExtractor.getDescription(adTag));
-                newAd.setTitle(dataExtractor.getTitle(adTag));
-                newAd.setLink(dataExtractor.getLink(adTag));
-                adsFromParse.add(newAd);
+                for (Element adTag : adsTags) {
+                    Ad newAd = new Ad();
+                    newAd.setAddress(dataExtractor.getAddress(adTag));
+                    if(!newAd.getAddress().getCity().getName().equals(city)) continue;
+                    newAd.setQuantity(dataExtractor.getQuantity(adTag));
+                    newAd.setQuadrature(dataExtractor.getQuadrature(adTag));
+                    newAd.setPeriod(dataExtractor.getPeriod(adTag));
+                    newAd.setPrice(dataExtractor.getPrice(adTag));
+                    newAd.setDescription(dataExtractor.getDescription(adTag));
+                    newAd.setTitle(dataExtractor.getTitle(adTag));
+                    newAd.setLink(dataExtractor.getLink(adTag));
+                    adsFromParse.add(newAd);
+
+                }
+                String pageValueMark = document.selectFirst("div[data-name~=^Pagination]").getElementsByTag("li").last().children().first().text();
+                if (!pageValueMark.equals("..")) {
+                    hasNextPage = false;
+                }
+
+                pageValue = String.valueOf(Integer.parseInt(pageValue) + 1);
 
             }
-            String pageValueMark = document.selectFirst("div[data-name~=^Pagination]").getElementsByTag("li").last().children().first().text();
-            if (!pageValueMark.equals("..")) {
-                hasNextPage = false;
-            }
-
-            pageValue = String.valueOf(Integer.parseInt(pageValue) + 1);
 
         }
         addressAdMap = adsFromParse.stream().collect(groupingBy(Ad::getAddress));
+        isProcessing = false;
     }
 
     public Map<Address, List<Ad>> getResults(String city) {
 
         return addressAdMap;
+    }
+
+    public boolean getProcessingStatus() {
+        return isProcessing;
+    }
+
+    public void setProcessing(boolean processing) {
+        isProcessing = processing;
     }
 }
 
