@@ -55,6 +55,7 @@ CREATE TABLE geo.streets
     id          int8,
     name        varchar(128) NOT NULL,
     district_id int8         NULL,
+    city_id int8         NULL,
     CONSTRAINT street_pkey PRIMARY KEY (id),
     CONSTRAINT street_district_id_fkey FOREIGN KEY (district_id) REFERENCES geo.districts (id)
 );
