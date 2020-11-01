@@ -25,6 +25,10 @@ public class Street {
     @JoinColumn(name = "district_id")
     District district;
 
+    @ManyToOne
+    @JoinColumn(name = "city_id")
+    City city;
+
     //@OneToMany(mappedBy = "street")
     //@Cascade(CascadeType.ALL)
     //List<GroupAd> groupAds;

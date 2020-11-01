@@ -15,7 +15,7 @@ public class RequestHandlerService {
 
     private final TaskService taskService;
 
-    public ResponseEntity<Object> addTask (Task task) throws Exception {
+    public ResponseEntity<ResponseMessage> addTask (Task task) throws Exception {
         if(isBlank(task)) {
             throw new VariableBlankException("В объекте пустые поля");
         }
@@ -28,9 +28,9 @@ public class RequestHandlerService {
     public boolean isBlank(Task task){
         return task.getTaskId() == null ||
                 task.getCity() == null ||
-                task.getCounty() == null ||
+                task.getCountry() == null ||
                 task.getTaskId().equals("") ||
-                task.getCounty().equals("") ||
+                task.getCountry().equals("") ||
                 task.getCity().equals("");
     }
 }

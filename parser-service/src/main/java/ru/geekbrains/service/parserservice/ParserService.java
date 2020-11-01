@@ -23,16 +23,18 @@ import java.util.*;
 public class ParserService {
 
     private TaskService taskService;
+    private AdService adService;
     private List<Parser> parsers = new LinkedList<>();
     private final Timer timer;
     private Task task;
     private Map<String, Object> ads = new HashMap<>();
-    private boolean processing = true;
+    private boolean processing = false;
     private long delay = 2000;
 
     @Autowired
-    public ParserService(TaskService taskService) {
+    public ParserService(TaskService taskService, AdService adService) {
         this.taskService = taskService;
+        this.adService = adService;
         timer = new Timer("Checking tasks");
         TimerTask timerTask = new TimerTask() {
             @Override
@@ -51,7 +53,7 @@ public class ParserService {
         if (!taskService.isEmpty() && !processing) {
             log.info("start task!");
             parsers.forEach(p -> {
-                p.start(taskService.peek().getCounty(), taskService.peek().getCity());
+                p.start(taskService.peek().getCountry(), taskService.peek().getCity());
             });
             processing = true;
         }
@@ -77,7 +79,7 @@ public class ParserService {
             if(!p.getProcessingStatus()){
                 log.info("getting results from " + p.getName());
                 //получаем список
-                //ads.putAll(p.getResult());
+                adService.saveAds(p.getResult(), p.getName());
             }
         });
     }

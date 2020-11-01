@@ -4,14 +4,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
 import ru.geekbrains.notification.telegram.TelegramBotContext;
-import sun.rmi.runtime.Log;
 
 @Slf4j
 public enum  BotState {
     START(false) {
         @Override
         public void enter(TelegramBotContext context) {
-            sendMessage(context, "Привет, сейчас мы найдем лдя вас жилье");
+            sendMessage(context, "Привет, сейчас мы найдем для вас жилье");
         }
 
         @Override
@@ -30,7 +29,8 @@ public enum  BotState {
         @Override
         public void handleInput(TelegramBotContext context) {
             //проверяем логин и связываем id c учетной записью
-            if(context.getInput().contains("next")){
+            log.info("### user input - " + context.getInput());
+            if(context.getInput().toUpperCase().contains("NEXT")){
                 next = QUESTION_1;
             } else {
                 next = CHECK_AUTH;
@@ -47,13 +47,14 @@ public enum  BotState {
         BotState next;
         @Override
         public void enter(TelegramBotContext context) {
-            sendMessage(context, "В каком городе найти жилье?");
+            sendMessage(context, "В какой стране будем искать жилье?");
         }
 
         @Override
         public void handleInput(TelegramBotContext context) {
             //проверка на валидность
-            if(context.getInput().contains("next")){
+            if(!context.getInput().equals("")){
+                context.getUser().getAnswer().setCountry(context.getInput());
                 next = QUESTION_2;
             } else {
                 next = QUESTION_1;
@@ -66,18 +67,20 @@ public enum  BotState {
         }
     },
 
+
     QUESTION_2(true) {
         BotState next;
         @Override
         public void enter(TelegramBotContext context) {
-            sendMessage(context, "Сейчас введите количетсво комнат. Напримре: 1 либо 1,2,3 если рассматриваете несколько вариантов");
+            sendMessage(context, "В каком городе найти жилье?");
         }
 
         @Override
         public void handleInput(TelegramBotContext context) {
             //проверка на валидность
-            if(context.getInput().contains("next")){
-                next = START;
+            if(!context.getInput().equals("")){
+                context.getUser().getAnswer().setCity(context.getInput());
+                next = QUESTION_3;
             } else {
                 next = QUESTION_2;
             }
@@ -93,15 +96,17 @@ public enum  BotState {
         BotState next;
         @Override
         public void enter(TelegramBotContext context) {
-            sendMessage(context, "Сейчас введите ценовой диапазон. Например: 20000-40000");
+            sendMessage(context, "Сейчас введите количетсво комнат. Напримре: 1 либо 1,2,3 если рассматриваете несколько вариантов");
         }
 
         @Override
         public void handleInput(TelegramBotContext context) {
             //проверка на валидность
-            if(context.getInput().contains("next")){
-                next = QUESTION_3;
-            } else {
+            try {
+                int room = Integer.parseInt(context.getInput());
+                context.getUser().getAnswer().setRoom(room);
+                next = QUESTION_4;
+            } catch (Exception e) {
                 next = QUESTION_3;
             }
         }
@@ -109,6 +114,48 @@ public enum  BotState {
         @Override
         public BotState nextState() {
             return next;
+        }
+    },
+
+    QUESTION_4(true) {
+        BotState next;
+        @Override
+        public void enter(TelegramBotContext context) {
+            sendMessage(context, "Сейчас введите ценовой диапазон. Например: 20000-40000");
+        }
+
+        @Override
+        public void handleInput(TelegramBotContext context) {
+            //проверка на валидность
+            String[] prices = context.getInput().split("-");
+            try {
+                //пока берем только 1 число
+                int priceMin = Integer.parseInt(context.getInput());
+                context.getUser().getAnswer().setPrice(priceMin);
+                next = END;
+            } catch (Exception e) {
+                next = QUESTION_3;
+            }
+        }
+
+        @Override
+        public BotState nextState() {
+            return next;
+        }
+    },
+
+    END (false) {
+        @Override
+        public void enter(TelegramBotContext context) {
+            //формируем таску и отправляем в rest service
+            context.sendAnswer();
+            sendMessage(context, "Ищем вариенты ... \n" +
+                    context.getUser().getAnswer().toString());
+        }
+
+        @Override
+        public BotState nextState() {
+            return CHECK_AUTH;
         }
     };
 

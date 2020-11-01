@@ -11,8 +11,8 @@ import java.util.Objects;
 @AllArgsConstructor
 public class Task {
     String taskId;
+    String county;
     String city;
-    String country;
 
     @Override
     public boolean equals(Object o) {
@@ -20,12 +20,11 @@ public class Task {
         if (o == null || getClass() != o.getClass()) return false;
         Task task = (Task) o;
         return city.equals(task.city) &&
-                country.equals(task.country);
+                county.equals(task.county);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(city, country);
+        return Objects.hash(city, county);
     }
-
 }
