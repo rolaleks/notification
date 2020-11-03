@@ -1,6 +1,7 @@
 package ru.geekbrains.service.requesthandler;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -11,11 +12,12 @@ import ru.geekbrains.model.Task;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class RequestHandlerService {
 
     private final TaskService taskService;
 
-    public ResponseEntity<Object> addTask (Task task) throws Exception {
+    public ResponseEntity<ResponseMessage> addTask (Task task) throws Exception {
         if(isBlank(task)) {
             throw new VariableBlankException("В объекте пустые поля");
         }
@@ -28,9 +30,9 @@ public class RequestHandlerService {
     public boolean isBlank(Task task){
         return task.getTaskId() == null ||
                 task.getCity() == null ||
-                task.getCounty() == null ||
+                task.getCountry() == null ||
                 task.getTaskId().equals("") ||
-                task.getCounty().equals("") ||
+                task.getCountry().equals("") ||
                 task.getCity().equals("");
     }
 }

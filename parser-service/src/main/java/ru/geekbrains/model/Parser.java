@@ -1,20 +1,29 @@
 package ru.geekbrains.model;
 
 import lombok.Data;
+import ru.geekbrains.parser.ApartmentParserInterface;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Data
-public class Parser {
-    private String name;
+public abstract class Parser {
+
     private boolean processing = false;
-    public void start(String country, String city){};
-    //исправить Object -> Ad
-    Map<String, Object> getResult() {
-        return new HashMap<>();
-    };
-    public boolean getProcessingStatus(){
+
+    private List<ApartmentParserInterface> apartmentList;
+
+    public abstract void start(String country, String city);
+
+    public abstract String getName();
+
+
+    public List<ApartmentParserInterface> getResult() {
+        return this.apartmentList;
+    }
+
+    public boolean getProcessingStatus() {
         return processing;
     }
 }

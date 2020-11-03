@@ -20,6 +20,7 @@ public class HomeController {
     @GetMapping
     public String home(Model model) {
         model.addAttribute("info", "home");
+        token.validateToken(token.getToken());
         model.addAttribute("token", token.getToken());
         return "home";
     }

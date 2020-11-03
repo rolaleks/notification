@@ -1,55 +1,45 @@
 package ru.geekbrains.notification.service;
 
+import com.sun.istack.NotNull;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.UriComponentsBuilder;
-import ru.geekbrains.notification.model.BotStateData;
+import org.springframework.transaction.annotation.Transactional;
+import ru.geekbrains.entity.bot.BotData;
+import ru.geekbrains.repository.BotStateRepository;
+import ru.geekbrains.repository.UserRepository;
 
 @Service
 @Slf4j
 public class BotStateService {
 
-    public BotStateData findUserByChatId(long chatId){
+    private final BotStateRepository botStateRepository;
+    private final UserRepository userRepository;
 
-        UriComponentsBuilder builder = UriComponentsBuilder
-                .fromHttpUrl("http://localhost:8079/")
-                .path("/stage")
-                .queryParam("chatId", String.valueOf(chatId));
-
-        String url = builder.build().encode().toUriString();
-        log.info(url);
-        RestTemplate restTemplate = new RestTemplate();
-
-        try {
-            return new RestTemplate().exchange(url, HttpMethod.GET, null, BotStateData.class).getBody();
-        } catch (Exception e) {
-            return null;
-        }
+    @Autowired
+    public BotStateService(BotStateRepository botStateRepository, UserRepository userRepository) {
+        this.botStateRepository = botStateRepository;
+        this.userRepository = userRepository;
     }
 
-    public void save(BotStateData botStateData){
-        UriComponentsBuilder builder = UriComponentsBuilder
-                .fromHttpUrl("http://localhost:8079/")
-                .path("/stage")
-                .queryParam("botStateData", botStateData);
-
-        String url = builder.build().encode().toUriString();
-        ResponseEntity<BotStateData> responseEntity = new RestTemplate().exchange(url, HttpMethod.POST, null, BotStateData.class);
-        checkingHttpStatus(responseEntity.getStatusCode());
+    @Transactional
+    public void saveState(@NotNull BotData botData) {
+        if(botData.getUser() == null){
+            botData.setUser(userRepository.findByLogin("test").get());
+        }
+        log.info(String.format("save bot state with chatID = {%s}", botData.getChatId()));
+//        if(!isConstrainsChatId(botStateData.getChatId())) {
+            botStateRepository.save(botData);
+//        }
     }
 
-    public void checkingHttpStatus(HttpStatus status){
-        switch (status) {
-            case CREATED:
-                log.info("Объект записан в базу");
-                break;
-            case BAD_REQUEST:
-                log.info("Ошибка");
-                break;
-        }
+    @Transactional(readOnly = true)
+    public BotData findStateByChatId(long chatId) {
+        log.info(String.format("find bot state with chatID = {%s}", chatId));
+        return botStateRepository.findByChatId(chatId).orElse(null);
+    }
+
+    private boolean isConstrainsChatId(long chatId) {
+        return botStateRepository.findByChatId(chatId).isPresent();
     }
 }

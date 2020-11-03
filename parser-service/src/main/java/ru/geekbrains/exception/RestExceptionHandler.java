@@ -14,12 +14,12 @@ public class RestExceptionHandler {
     @ExceptionHandler(DuplicateTaskException.class)
     public ResponseEntity<Object> notFoundExceptionHandler(DuplicateTaskException exception, WebRequest request) {
         ResponseMessage message = new ResponseMessage("Дубликат задачи", exception.getLocalizedMessage());
-        return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(message, HttpStatus.CONFLICT);
     }
 
     @ExceptionHandler(VariableBlankException.class)
     public ResponseEntity<Object> notFoundExceptionHandler(VariableBlankException exception, WebRequest request) {
         ResponseMessage message = new ResponseMessage("Пустое поле", exception.getLocalizedMessage());
-        return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(message, HttpStatus.NOT_ACCEPTABLE);
     }
 }
