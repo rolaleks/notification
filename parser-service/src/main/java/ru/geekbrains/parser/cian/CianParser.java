@@ -18,6 +18,7 @@ import ru.geekbrains.parser.cian.utils.AdsNotFoundException;
 import ru.geekbrains.parser.cian.utils.CaptchaException;
 import ru.geekbrains.parser.cian.utils.CianRegionDefiner;
 import ru.geekbrains.parser.cian.utils.DataExtractor;
+import ru.geekbrains.service.parserservice.ParserService;
 
 import java.util.*;
 
@@ -55,11 +56,15 @@ public class CianParser extends Parser {
     private final List<ApartmentParserInterface> cianApartments = new ArrayList<>();
     private boolean isProcessing = false;
     private final String name = "Циан";
+    private ParserService parserService;
 
     @Autowired
-    public CianParser(DataExtractor dataExtractor, CianRegionDefiner cianRegionDefiner) {
+    public CianParser(DataExtractor dataExtractor, CianRegionDefiner cianRegionDefiner, ParserService parserService) {
         this.dataExtractor = dataExtractor;
         this.cianRegionDefiner = cianRegionDefiner;
+        this.parserService = parserService;
+
+        this.parserService.register(this);
     }
 
     /**
@@ -78,8 +83,8 @@ public class CianParser extends Parser {
         String pageValue = "1";
         boolean hasNextPage = true;
         for (String regionCode : regionCodes) {
-//            while (!pageValue.equals("3")) { // uncomment to limit search deep to 2 pages. Needed to prevent blocking by IP
-            while (hasNextPage) {  // uncomment to search throughout all the target pages
+            while (!pageValue.equals("3")) { // uncomment to limit search deep to 2 pages. Needed to prevent blocking by IP
+//            while (hasNextPage) {  // uncomment to search throughout all the target pages
 
                 URIBuilder uri = new URIBuilder();
                 uri.setScheme("https")
@@ -133,5 +138,7 @@ public class CianParser extends Parser {
     public String getName() {
         return name;
     }
+
+
 }
 
