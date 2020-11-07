@@ -32,6 +32,7 @@ public class RequestService {
         String keyRequestParam = getKeyFromUserRequest(newRequest);
         // создаем задачу для парсера по новым параметрам
         Task task = creteTask(newRequest.getAnswer());
+        log.error("task: " + task.toString());
 
         //ищем по ключу запрос, если нашли, проверяем его актуальность
         RequestParam oldRequest = userRequestList.get(keyRequestParam);
@@ -68,9 +69,8 @@ public class RequestService {
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl("http://localhost:8060").path("/task/create");
         String url = builder.build().encode().toUriString();
         log.info(String.format("url = %s", url));
-        ResponseEntity responseEntity = new RestTemplate().postForEntity(url, task, ResponseMessage.class);
-        ResponseMessage responseMessage  = (ResponseMessage) responseEntity.getBody();
-        return new ResponseEntity<>(responseMessage, responseEntity.getStatusCode());
+        log.info(String.format("task = %s", task));
+        return new RestTemplate().postForEntity(url, task, ResponseMessage.class);
     }
 
     private RequestParam getRequest(BotData botData){

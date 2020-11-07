@@ -11,8 +11,8 @@ import java.util.Objects;
 @AllArgsConstructor
 public class Task {
     String taskId;
-    String city;
     String country;
+    String city;
 
     @Override
     public boolean equals(Object o) {
