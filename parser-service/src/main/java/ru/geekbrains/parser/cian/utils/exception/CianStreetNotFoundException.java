@@ -1,4 +1,4 @@
-package ru.geekbrains.utils;
+package ru.geekbrains.parser.cian.utils.exception;
 
 import lombok.extern.slf4j.Slf4j;
 

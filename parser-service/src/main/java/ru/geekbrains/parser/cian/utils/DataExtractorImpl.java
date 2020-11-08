@@ -180,19 +180,16 @@ public class DataExtractorImpl implements DataExtractor {
         Element adTitle = adTag.select("span[data-mark$=OfferTitle]").first();
         Element adSubtitle = adTag.select("span[data-mark$=OfferSubtitle]").first();
 
-        String title = adTitle.text() + " " + (adSubtitle != null ? adSubtitle.text() : "");
-        return title;
+        return adTitle.text() + " " + (adSubtitle != null ? adSubtitle.text() : "");
     }
 
     private String getDescription(Element adTag) {
         Element adDescription = adTag.select("div[class~=\\S*description\\S*]").first();
-        String description = adDescription.text();
-        return description;
+        return adDescription.text();
     }
 
     private String getLink(Element adTag) {
         Element adLinkTag = adTag.selectFirst("div[data-name$=LinkArea]");
-        String link = adLinkTag.selectFirst("a").attr("href");
-        return link;
+        return adLinkTag.selectFirst("a").attr("href");
     }
 }

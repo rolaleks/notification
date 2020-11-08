@@ -1,17 +1,37 @@
 package ru.geekbrains.parser.cian;
 
+import com.gargoylesoftware.htmlunit.BrowserVersion;
+import com.gargoylesoftware.htmlunit.DefaultCredentialsProvider;
+import com.gargoylesoftware.htmlunit.ProxyConfig;
+import com.gargoylesoftware.htmlunit.WebClient;
+import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.http.HttpEntity;
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.CredentialsProvider;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.utils.URIBuilder;
+import org.apache.http.impl.client.BasicCredentialsProvider;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
+import org.openqa.selenium.remote.DesiredCapabilities;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import ru.geekbrains.entity.Ad;
 import ru.geekbrains.entity.Address;
+import ru.geekbrains.entity.system.Proxy;
 import ru.geekbrains.model.Parser;
 import ru.geekbrains.parser.ApartmentParserInterface;
 import ru.geekbrains.parser.cian.utils.AdsNotFoundException;
@@ -19,7 +39,9 @@ import ru.geekbrains.parser.cian.utils.CaptchaException;
 import ru.geekbrains.parser.cian.utils.CianRegionDefiner;
 import ru.geekbrains.parser.cian.utils.DataExtractor;
 import ru.geekbrains.service.parserservice.ParserService;
-
+import ru.geekbrains.service.system.ProxyService;
+import java.io.IOException;
+import java.net.InetSocketAddress;
 import java.util.*;
 
 import static java.util.stream.Collectors.groupingBy;
@@ -56,14 +78,21 @@ public class CianParser extends Parser {
     private final List<ApartmentParserInterface> cianApartments = new ArrayList<>();
     private boolean isProcessing = false;
     private final String name = "Циан";
+    private ProxyService proxyService;
+    private Proxy proxy;
     private ParserService parserService;
 
     @Autowired
-    public CianParser(DataExtractor dataExtractor, CianRegionDefiner cianRegionDefiner, ParserService parserService) {
+    public CianParser(DataExtractor dataExtractor, CianRegionDefiner cianRegionDefiner, ProxyService proxyService, ParserService parserService) {
         this.dataExtractor = dataExtractor;
         this.cianRegionDefiner = cianRegionDefiner;
+        this.proxyService = proxyService;
+        Optional<Proxy> optionalProxy = proxyService.findByActive();
+        if (!optionalProxy.isPresent()) {
+            throw new RuntimeException("No valid proxy");
+        }
+        this.proxy = optionalProxy.get();
         this.parserService = parserService;
-
         this.parserService.register(this);
     }
 
@@ -74,7 +103,7 @@ public class CianParser extends Parser {
      * @param city    Name of a city in which parser should find adTags
      */
     public void start(String country, String city) {
-        isProcessing = true;
+        setProcessing(true);
         if (!country.equals("Россия")) {
             throw new RuntimeException("You are searching adTags in the country " + country + " but we can find ads only in 'Россия'");
         }
@@ -96,15 +125,34 @@ public class CianParser extends Parser {
                         .addParameter("region", regionCode)
                         .addParameter("p", pageValue);
 
-                WebDriver driver = new HtmlUnitDriver();
+                //*********** HtmlUnitDriver connection - 1st variant*****************
+                HtmlUnitDriver driver = new HtmlUnitDriver();
+//               driver.get("https://ipinfo.io/ip");
                 driver.get(uri.toString());
                 Document document = Jsoup.parse(driver.getPageSource());
 
+
+                //*********** org.apache.http connection- 2st variant*****************
+//                CredentialsProvider credsProvider = new BasicCredentialsProvider();
+//                credsProvider.setCredentials(
+//                        new AuthScope(this.proxy.getHost(), Integer.parseInt(this.proxy.getPort())),
+//                        new UsernamePasswordCredentials(this.proxy.getLogin(), this.proxy.getPassword()));
+//                CloseableHttpClient httpClient = HttpClients.custom().setDefaultCredentialsProvider(credsProvider).build();
+//                Document document = null;
+//                try (CloseableHttpResponse response = httpClient.execute(new HttpGet(uri.toString()))) {
+//                CloseableHttpResponse response = httpClient.execute(new HttpGet("https://ipinfo.io/ip"));
+//
+//                    document = Jsoup.parse(EntityUtils.toString(response.getEntity()));
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
+
+                assert document != null;
                 Elements adTags = document.getElementsByTag("article");
                 if (document.title().contains("Captcha"))
                     throw new CaptchaException("Your IP address has been blocked");
                 if (adTags.size() == 0)
-                    throw new AdsNotFoundException("There are no ads can be parsed from the page. May be Cian had changed html structure");
+                    throw new AdsNotFoundException("There are no ads can be parsed from the page");
 
                 log.info("Amount of tags on the page: " + adTags.size());
 
@@ -121,17 +169,22 @@ public class CianParser extends Parser {
 
             }
         }
-        isProcessing = false;
+        setProcessing(false);
     }
 
 
-    public List<ApartmentParserInterface> getResult(String city) {
+    public List<ApartmentParserInterface> getResult() {
 
         return cianApartments;
     }
 
     public boolean getProcessingStatus() {
         return isProcessing;
+    }
+
+    @Override
+    public void setProcessing(boolean processing) {
+        isProcessing = processing;
     }
 
     @Override
