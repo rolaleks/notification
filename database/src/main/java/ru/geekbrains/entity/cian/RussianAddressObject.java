@@ -3,7 +3,7 @@ package ru.geekbrains.entity.cian;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "russian_address_objects", schema = "public", catalog = "realestatenotifier")
+@Table(name = "russian_address_objects", schema = "public")
 public class RussianAddressObject {
     private Integer actStatus;
     private String aoGuid;

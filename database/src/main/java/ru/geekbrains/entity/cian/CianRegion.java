@@ -5,7 +5,7 @@ import lombok.Data;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "cian_regions", schema = "public", catalog = "realestatenotifier")
+@Table(name = "cian_regions", schema = "public")
 public class CianRegion {
     private String cianCode;
     private String regionName;
