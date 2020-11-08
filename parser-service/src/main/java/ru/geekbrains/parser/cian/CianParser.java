@@ -40,7 +40,6 @@ import ru.geekbrains.parser.cian.utils.CianRegionDefiner;
 import ru.geekbrains.parser.cian.utils.DataExtractor;
 import ru.geekbrains.service.parserservice.ParserService;
 import ru.geekbrains.service.system.ProxyService;
-
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.*;
@@ -192,5 +191,7 @@ public class CianParser extends Parser {
     public String getName() {
         return name;
     }
+
+
 }
 
