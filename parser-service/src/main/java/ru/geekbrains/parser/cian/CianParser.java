@@ -1,9 +1,6 @@
 package ru.geekbrains.parser.cian;
 
-import com.gargoylesoftware.htmlunit.BrowserVersion;
-import com.gargoylesoftware.htmlunit.DefaultCredentialsProvider;
-import com.gargoylesoftware.htmlunit.ProxyConfig;
-import com.gargoylesoftware.htmlunit.WebClient;
+import com.gargoylesoftware.htmlunit.*;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpEntity;
@@ -41,9 +38,13 @@ import ru.geekbrains.parser.cian.utils.CianRegionDefiner;
 import ru.geekbrains.parser.cian.utils.DataExtractor;
 import ru.geekbrains.service.parserservice.ParserService;
 import ru.geekbrains.service.system.ProxyService;
+import sun.management.VMOptionCompositeData;
+
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import static java.util.stream.Collectors.groupingBy;
 
@@ -96,6 +97,7 @@ public class CianParser extends Parser implements Runnable {
         this.proxy = optionalProxy.get();
         this.parserService = parserService;
         this.parserService.register(this);
+        java.util.logging.Logger.getLogger("com.gargoylesoftware.htmlunit").setLevel(Level.OFF);
     }
     /**
      * Starts new Thread, initializes variable task
@@ -136,7 +138,14 @@ public class CianParser extends Parser implements Runnable {
                         .addParameter("p", pageValue);
 
                 //*********** HtmlUnitDriver connection - 1st variant*****************
-                HtmlUnitDriver driver = new HtmlUnitDriver();
+                HtmlUnitDriver driver = new HtmlUnitDriver() {
+                    @Override
+                    protected WebClient modifyWebClient(WebClient client) {
+                        client.setCssErrorHandler(new SilentCssErrorHandler()); // shouting up wall of warnings in logs form htmlUnitDriver
+                        return client;
+                    }
+
+                };
 //               driver.get("https://ipinfo.io/ip");
                 driver.get(uri.toString());
                 Document document = Jsoup.parse(driver.getPageSource());
